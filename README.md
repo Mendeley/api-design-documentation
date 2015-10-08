@@ -97,6 +97,6 @@ This document is intended for any developer who is writing an API.
 	* there is no standard
 	* there are multiple competing standards, and vigorous debate about which one is right
 
-** More important to have a working API with actual clients, than achieve perfect RESTful purity**	
+**More important to have a working API with actual clients, than achieve perfect RESTful purity**	
 	
 
