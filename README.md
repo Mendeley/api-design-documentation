@@ -48,3 +48,33 @@ This document is intended for any developer who is writing an API.
 
 
 
+## Guiding principles
+
+### Support a wide range of clients
+
+* Network
+	* Same Amazon region as the API 
+	* Data centre with a fibre link 
+	* Home internet connection 
+	* Mobile network
+	
+* Device - multiple devices: Differ vastly in power, battery.
+	* Servers 
+	* PCs
+	* Mobile phones / tablets
+	
+* Programming languages - languages: not all languages have the same support for concurrency/HTTP features
+
+* Syncing vs non-syncing - Getting lots of data vs on-demand
+
+* Release cycles -  can vary widely between webapps (days) and installed apps (months when you consider how long it takes people to upgrade)
+
+
+### Be consistent 
+* Should look like one API, not many.
+* Similar things should look similar, regardless of which service they're in, or who worked on them.
+*  Examples:
+	* prefer snake_case to camelCase or kebab-case
+	* a person has a first_name and a last_name 
+	* when to use "link", "website" and "url"
+
