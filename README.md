@@ -20,11 +20,11 @@ This document is intended for any developer who is writing an API.
 
 ✔ We do this, we like it. 
 
-&#88; We don't do this, but that's fine because I don't like it anyway
+**&#88;** We don't do this, but that's fine because I don't like it anyway
 
-&#33; We do this, but I wish we didn't 
+**&#33;** We do this, but I wish we didn't 
 
-&#63; This is something that we haven't done that's worth at least
+**&#63;** This is something that we haven't done that's worth at least
  thinking about. It may still be a terrible idea.
 
 
@@ -75,6 +75,28 @@ This document is intended for any developer who is writing an API.
 * Similar things should look similar, regardless of which service they're in, or who worked on them.
 *  Examples:
 	* prefer snake_case to camelCase or kebab-case
-	* a person has a first_name and a last_name 
+	* a person has a first_name and a last_name **(&#33; - should think about this more - not all names follow this standard e.g. Chinese)**
 	* when to use "link", "website" and "url"
+	
+	
+### Include all non-trivial business logic
+* Having logic spread amongst all of our clients makes it much harder to:
+	* achieve cross-device consistency
+	* write new apps	
+* Always prepare for a second client even if you're building for one
+* Clients should be little more than a view on the data. That data, and the bulk of the logic, should be in the API
+
+### Follow standards pragmatically
+* Use standard HTTP, and industry best practices, where appropriate:
+	* avoids surprising client developers
+	* tried and tested
+	* better support in client-side libraries 
+	
+* However, there may be times where:
+	* following the standard exactly would be excessively complicated
+	* there is no standard
+	* there are multiple competing standards, and vigorous debate about which one is right
+
+** More important to have a working API with actual clients, than achieve perfect RESTful purity**	
+	
 
