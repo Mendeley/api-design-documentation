@@ -18,13 +18,13 @@ This document is intended for any developer who is writing an API.
 
 ## Conventions used
 
-✔ We do this, we like it. 
+**✔** We do this, we like it. 
 
-**&#88;** We don't do this, but that's fine because I don't like it anyway
+**X** We don't do this, but that's fine because I don't like it anyway
 
-**&#33;** We do this, but I wish we didn't 
+**!** We do this, but I wish we didn't 
 
-**&#63;** This is something that we haven't done that's worth at least
+**?** This is something that we haven't done that's worth at least
  thinking about. It may still be a terrible idea.
 
 
@@ -172,9 +172,125 @@ API design strategy for connecting resources within APIs.
 	* if you want to build a useful client, instead of hard-coding URLs, you end up hard-coding which links to follow
 	* it is becoming more popular with more success stories in the wild such as the [Guardian](http://www.programmableweb.com/news/how-guardian-approaching-hypermedia-based-api-infrastructure/2015/04/27) 
 	
+## HTTP 
 
+### Use the right spec 
+ 
+**Don't use RFC2616.** Delete it from your hard drives, bookmarks, and burn (or responsibly recycle) any copies that are printed out. 
 
+RFC2616 was the reference for HTTP, but now it's deprecated. You'll still see it referred to in lots of places.
+
+Source: [mnot's blog](https://www.mnot.net/blog/2014/06/07/rfc2616_is_dead)
+
+Reworked into these six RFCs:
+
+* [RFC7230](https://tools.ietf.org/html/rfc7230) - HTTP/1.1: Message Syntax and Routing
+	* low-level message parsing and connection management
+* [RFC7231](https://tools.ietf.org/html/rfc7231) - HTTP/1.1: Semantics and Content 
+	* methods, status codes and headers
+* [RFC7232](https://tools.ietf.org/html/rfc7232) - HTTP/1.1: Conditional Requests 
+	* e.g., If-Modified-Since RFC7233 - HTTP/1.1: Range Requests - getting partial content
+* [RFC7234](https://tools.ietf.org/html/rfc7234) - HTTP/1.1: Caching 
+ 	* browser and intermediary caches 
+* [RFC7235](https://tools.ietf.org/html/rfc7235) - HTTP/1.1: Authentication 
+ 	* a framework for HTTP authentication
 
  
-	
+## URLs 
 
+### Basics
+URLs are based around plural nouns.
+
+	* /things - identifies a collection of resources.
+	* /things/(uuid) - identifies a single resource within a collection.
+
+Should only need one UUID per URL - "universally unique"
+
+UUIDs rather than MySQL keys - don't couple the API to our database
+
+
+### Filter with query parameters
+We like 
+
+	 /documents?starred=true
+
+	 /files?document_id=b91d9530-9017-4b96-b000-cdc245920355
+
+We **don't** like 
+ 
+ 	/documents/b91d9530-9017-4b96-b000-cdc245920355/files/
+
+* reduces surface of the API
+* makes it possible to get all files without having to traverse documents (better for syncing clients)
+
+**?** We are doing this, it maybe a terrible idea
+
+	/locations?prefix=XXX
+	
+	/institutions?REQUIRED_FILTER
+	
+	/catalog?REQUIRED_FILTER
+* in some cases we have required query parameters e.g. prefix in locations and doi, pmid etc in catalog
+* we do this because returning the collection of resources would be too big for most clients e.g. the catalog
+
+### Prefer flat to nested
+We like
+
+	 /files/0c98cfaa-7d58-4720-abd1-3b09fe008c48
+	 
+We **don't** like 
+
+	/documents/b91d9530-9017-4b96-b000-cdc245920355/files/0c98cfaa-7d58-4720-abd1-3b09fe008c48	 
+* reduces coupling between resources
+
+
+### If you have to nest
+
+**!** We do this, but we wish we didn't 
+
+	/folders/1016198b-f97a-4123-82af-be7239ff352b/documents/8d7a4bd2-918a- 4a8c-8529-4ca437b91313
+
+**X** We don't do this, but that's fine because we don't like it anyway
+
+	/oapi/library/documents/7135271181/file/3221525ea6f746b577b6a8ad40d89df3f41f776a/2589311
+
+* provide context by putting something between the IDs
+
+* remove as many extraneous parts of the URL as you can
+
+* think again about whether you really have to nest - can you identify the
+resource by one UUID?
+
+	* Second URL - IDs are document, filehash, group 
+	* Not clear what that last ID is
+	* The resource in question is a file - why can't it have an ID and be
+ identified by just that?
+
+### Actions
+Some actions don't naturally fit a RESTful model.
+
+As an emergency manoeuvre, use a POST with a verb in the URL.
+
+ **!** We do this, but I wish we didn't  
+ 
+ 	POST /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313/restore
+ 
+* this is the only time you're allowed to put a verb in the URL
+* prefer "/actions" - if you have multiple then "restore" is like an ID, so should have something in the middle
+
+ **?** We are doing this, it maybe a terrible idea
+ 
+ 	POST /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313/actions/restore
+
+ **X** We don't do this, but that's fine because we don't like it anyway 
+ 
+ 	RESTORE /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313
+ 	
+ * this should be a last resort - prefer to PATCH the resource if you can.
+ * however tempting it may be, don't invent your own HTTP method - some clients won't be able to handle this	
+ 
+ 
+### Looking up by a secondary ID
+ 
+
+### Macro services (TBD)
