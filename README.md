@@ -8,13 +8,18 @@ Why?
 
 To avoid [bikeshedding](https://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality) arguments and to aid a positive developer experience (DX). 
  
+======== 
 ## Current Maintainer
 Joyce Stack
 
 Original documented drafted and attributed to Matt Thomson. 
 
+========
+
 ## Who should read this document? 
 This document is intended for any developer who is writing an API.  
+
+========
 
 ## Conventions used
 
@@ -27,6 +32,8 @@ This document is intended for any developer who is writing an API.
 **?** This is something that we haven't done that's worth at least
  thinking about. It may still be a terrible idea.
 
+
+========
 
 ## General Advice  
 
@@ -46,7 +53,7 @@ This document is intended for any developer who is writing an API.
 	* Some decisions are hard to change
 
 
-
+========
 
 ## Guiding principles
 
@@ -97,7 +104,10 @@ This document is intended for any developer who is writing an API.
 	* there is no standard
 	* there are multiple competing standards, and vigorous debate about which one is right
 
-**More important to have a working API with actual clients, than achieve perfect RESTful purity**	
+**More important to have a working API with actual clients, than achieve perfect RESTful purity**
+
+
+========	
 
 ## REST 
 
@@ -128,7 +138,7 @@ This document is intended for any developer who is writing an API.
 	
 	
 	
-## Uniform Interface	
+### Uniform Interface	
 
 * Identification of resources
 	* each resource is identified by a URI, each request relates to a resource separation between resource and representation (JSON/XML)
@@ -162,7 +172,7 @@ This document is intended for any developer who is writing an API.
 
 * Think about making resources cacheable
 
-## Hypermedia
+### Hypermedia
 API design strategy for connecting resources within APIs.
 
 * each response includes links to related/nested resources, e.g.
@@ -171,6 +181,9 @@ API design strategy for connecting resources within APIs.
 	* navigating hypermedia is like browsing a website
 	* if you want to build a useful client, instead of hard-coding URLs, you end up hard-coding which links to follow
 	* it is becoming more popular with more success stories in the wild such as the [Guardian](http://www.programmableweb.com/news/how-guardian-approaching-hypermedia-based-api-infrastructure/2015/04/27) 
+	
+	
+========	
 	
 ## HTTP 
 
@@ -195,6 +208,8 @@ Reworked into these six RFCs:
 * [RFC7235](https://tools.ietf.org/html/rfc7235) - HTTP/1.1: Authentication 
  	* a framework for HTTP authentication
 
+========
+
  
 ## URLs 
 
@@ -210,7 +225,7 @@ UUIDs rather than MySQL keys - don't couple the API to our database
 
 
 ### Filter with query parameters
-We like 
+**✔** We do this, we like it.
 
 	 /documents?starred=true
 
@@ -234,7 +249,7 @@ We **don't** like
 * we do this because returning the collection of resources would be too big for most clients e.g. the catalog
 
 ### Prefer flat to nested
-We like
+**✔** We do this, we like it.
 
 	 /files/0c98cfaa-7d58-4720-abd1-3b09fe008c48
 	 
@@ -317,5 +332,133 @@ status.
 * Not widely implemented
 
 	* Jersey does support it (@MatrixParam), but most other frameworks don't
+	
  
+======== 
+ 
+## HTTP Methods 
+
+### GET
+
+* Fetch a representation of the resource at the URI.
+
+### POST
+
+* Store the enclosed entity as a subresource of the resource at the URI.
+
+### PUT
+
+* Store the enclosed entity under the URI.
+
+### DELETE
+
+* Delete the resource at the URI.
+
+### PATCH
+
+* Apply partial modifications to the resource at the URI.
+	* PATCH wasn't in the original specification, but we use it.
+
+
+
+### Safety and idempotency
+
+A method is **safe** if it has no side effects.
+
+* GET
+	* retrying has same response 	
+
+A method is **idempotent** if the side effects of repeating the
+request are the same as for a single request.
+
+* GET
+
+* PUT
+
+* DELETE
+
+	* retrying may have different response (e.g. already deleted), but doesn't make any material difference
+
+Otherwise, no guarantees about what repeating a request will do.
+
+* POST
+
+* PATCH (but often idempotent in practice)
+
+	* won't be retried
+
+
+Clients can use these facts to decide whether to retry a request.
+
+### Which one to use?
+
+* Use GET for retrieving data.
+
+* Use POST for creating a new resource (not idempotent - multiple POSTs
+create multiple resources).
+
+* For updates:
+
+ 	* PUT - replace the whole resource with this representation. 
+ 	* PATCH - replace only the fields that are in the body.
+
+We prefer PATCH to PUT for updates. **✔** We do this, we like it.
+ 
+* Reduce window conditions caused by concurrent updates (more on this
+later).
+
+* Don't need to have the whole resource in hand to do an update.
+
+* Can still get PUT-like semantics by sending the whole object.
+
+* In reality, the client doesn't replace the whole resource anyway (e.g.
+last modified time).
+
+
+========
+
+## Specials
+
+
+### OPTIONS
+
+Returns details about what requests will be accepted for a URL.
+
+**✔** Used for CORS (more later).
+
+### HEAD
+
+Identical to GET, but returns only the headers, not the body.
+
+**?** Clients could use this to get pagination counts, but we haven't
+implemented that.
+
+========
+
+## Oddities
+
+### CONNECT
+
+**X** Converts the connection to a transparent TCP/IP tunnel.
+
+### TRACE
+
+Echoes the request back, so that the client can see what intermediate
+servers have done.
+
+**X** Breaks layered system constraint.
+
+### LINK / UNLINK
+
+Used to create/delete a link between two resources.
+
+e.g. adding/removing documents from folders.
+
+**?** Specified by [*this internet
+draft*](http://tools.ietf.org/html/draft-snell-link-method), but didn't
+make it into the HTTP spec.
+
+### MISCELLANEOUSOTHERTHING
+
+**X** You can make up your own methods, but please don't.
 
