@@ -98,5 +98,83 @@ This document is intended for any developer who is writing an API.
 	* there are multiple competing standards, and vigorous debate about which one is right
 
 **More important to have a working API with actual clients, than achieve perfect RESTful purity**	
+
+## REST 
+
+### What is REST? 
+* Based on a research paper of [Roy Fielding](https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm) 
+* Read [this book](http://www.amazon.com/RESTful-Web-Services-Leonard-Richardson/dp/0596529260)
+* See [Wikipedia](https://en.wikipedia.org/wiki/Representational_state_transfer)
+
+### REST constraints 
+* Client-server
+	* a uniform interface separates clients from servers.
+		* clients don't have to worry about data storage (improves portability), well-defined interface means that servers and clients can evolve independently
+* Stateless
+	* no client context is stored on the server between requests.
+		* improves scalability, clients can have local state
+* Cacheable
+	* clients can cache responses.
+		* responses can define themselves as cacheable or not, improves performance
+* Layered system
+	* a client cannot ordinarily tell whether it is connected directly to the end server, or to an intermediary along the way.
+		* load balancing, caching, securiy
+* Code On Demand (Optional)
+	*  	servers changing client behaviour by sending code to clients (e.g. Java applets). 
+		* We don't do this
+
+* Uniform interface
+	* This has 4 constraints which are fundamental to building REST services so including a new section. 
+	
+	
+	
+## Uniform Interface	
+
+* Identification of resources
+	* each resource is identified by a URI, each request relates to a resource separation between resource and representation (JSON/XML)
+* Manipulation of resources through representations
+	* a client that holds a representation has enough information to modify/delete the resource
+* Self-descriptive messages
+	* message holds enough information about how to process it
+* [Hypermedia as the engine of application state (HATEOAS)](#Hypermedia)
+	* clients make state transition using links in the messages warning - here be dragons
+
+### Addiontal notes on Uniform Interface
+
+* Uniform interface decouples the architecture, allows client and server to evolve independently
+* Resources are the entities in the system, representations are the message contents
+* Messages describe the state of the resources, and how they should change 
+* REST usually runs over HTTP, but it doesn't have to. I'll assume you know about HTTP, and talk about how we use it to design APIs.
+
+### What does this mean in practice?
+* Interfaces need to be clearly defined, to allow clients and servers to evolve independently
+
+* URLs need to be chosen carefully
+
+* Use appropriate HTTP methods to manipulate state
+ 
+* Use standard HTTP headers to indicate how messages should be processed
+	* e.g. Content-Type header indicates which parser to use
+	* e.g. Cache-Control header indicates how long to cache
+
+* Think in terms of maniuplating resources, rather than making remote procedure calls
+	* e.g. change the "is read" flag on a document, rather than marking a document as read
+
+* Think about making resources cacheable
+
+## Hypermedia
+API design strategy for connecting resources within APIs.
+
+* each response includes links to related/nested resources, e.g.
+	* group has link to list of group members document has link to attach a file
+* clients don't hard-code URLs, they start at the root and navigate to the thing that they want
+	* navigating hypermedia is like browsing a website
+	* if you want to build a useful client, instead of hard-coding URLs, you end up hard-coding which links to follow
+	* it is becoming more popular with more success stories in the wild such as the [Guardian](http://www.programmableweb.com/news/how-guardian-approaching-hypermedia-based-api-infrastructure/2015/04/27) 
+	
+
+
+
+ 
 	
 
