@@ -278,7 +278,8 @@ As an emergency manoeuvre, use a POST with a verb in the URL.
 * this is the only time you're allowed to put a verb in the URL
 * prefer "/actions" - if you have multiple then "restore" is like an ID, so should have something in the middle
 
- **?** We are doing this, it maybe a terrible idea
+ **?** This is something that we haven't done that's worth at least
+ thinking about. It may still be a terrible idea.
  
  	POST /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313/actions/restore
 
@@ -291,6 +292,30 @@ As an emergency manoeuvre, use a POST with a verb in the URL.
  
  
 ### Looking up by a secondary ID
+**!** We do this, but I wish we didn't  
+
+	/catalog?doi=10.1016%2Fj.molcel.2009.09.013
+
+* /catalog is a collection resource, and needs to return a list (e.g./catalog?author=John+Smith).
+
+* But, with a DOI, this can only a list of 0 or 1 documents.
+
+* Would be more natural to have something that could return a 200/404
+status.
+
+**?** This is something that we haven't done that's worth at least
+ thinking about. It may still be a terrible idea.
+
+	/catalog;doi=10.1016%2Fj.molcel.2009.09.013
+
+[*Matrix URIs*](http://www.w3.org/DesignIssues/MatrixURIs.html)
+
+* Does exactly the thing we want
+
+* Based on a 1996 blog post by Tim Berners-Lee - not in any RFC
+
+* Not widely implemented
+
+	* Jersey does support it (@MatrixParam), but most other frameworks don't
  
 
-### Macro services (TBD)
