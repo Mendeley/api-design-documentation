@@ -954,7 +954,7 @@ Could use [RFC 2822](https://tools.ietf.org/html/rfc2822) everywhere, but ugly a
 
  **✔** We don't have a good answer for this.
  
- =========================
+=========================
 
 ## Client-specific behaviour
 
@@ -995,84 +995,91 @@ they all are?
 	
 	* if there are lawyers at your desk and they want to have a meeting
 
- If we really have to lock down a service down, consider using OAuth
+**?** If we really have to lock down a service down, consider using OAuth
 scopes.
 
-clients request the specific extra privileges that they need
+* clients request the specific extra privileges that they need
 
-OAuth database says which clients are allowed which scopes - avoids
-having whitelists spread through lots of services
+* OAuth database says which clients are allowed which scopes - avoids having whitelists spread 
+	through lots of services
 
-platform-only
+**?** We currently have a ```platform-only``` client to restrict access 
 
-allows reuse along microservice boundaries restrict based on client ID
+* which restricts servcies to other platform services only 
+* the service should never be used/exposed to external clients
+* we don't like this at the moment as its difficult to know which services exactly have restricted access
  
  
  =========================
 
 ## Race Conditions
 
- No locking/synchronization on an API State can change between calls
+No locking/synchronization on an API State can change between calls
 
- Here are some tactics that can help
+Here are some tactics that can help
 
 ### Concurrent updates
 
- Remember the semantics of PUT and PATCH:
+Remember the semantics of PUT and PATCH:
 
-PUT - replace the whole resource with this representation.
+* PUT - replace the whole resource with this representation.
 
-PATCH - replace only the fields that are in the body.
+* PATCH - replace only the fields that are in the body.
 
- Suppose that two clients want to update different fields on the same
- resource.
+Suppose that two clients want to update different fields on the same
+resource.
 
-PUT - both send in the full object, and the second one will overwrite
+* PUT - both send in the full object, and the second one will overwrite
 the first one's changes.
 
-PATCH - both send in only the field they want to update, and both
+* PATCH - both send in only the field they want to update, and both
 updates are applied correctly.
 
- **✔** If used like this, PATCH helps to reduce (but not avoid) race
- conditions.
+**✔** If used like this, PATCH helps to reduce (but not avoid) race
+conditions.
 
- **✔** However, most of our clients use PATCH like PUT (sending the whole
- representation every time), so they don't get this benefit.
-**✔**
+**X** However, most of our clients use PATCH like PUT (sending the whole
+representation every time), so they don't get this benefit.
 
+**✔** Clients that want PUT-like semantics, but want to avoid lost
+ updates, can specify the timestamp of the previous time they retrieved a resource.
 
- **✔** Clients that want PUT-like semantics, but want to avoid lost
- updates, can specify the timestamp of the previous time they retrieved
- a resource.
+(see also: ETags).
 
- (see also: ETags).
+**?** Could make this required, and send back ```428 Precondition Required``` if
+ there is no ```If-Unmodified-Since``` header.
 
-  Could make this required, and send back 428 Precondition Required if
- there is no If-Unmodified-Since header.
+Only implemented for documents - bigger objects, so more likely to
+change under your feet - but this was just due to time constraints, so might be worth rolling out across the board
 
- Only implemented for documents - bigger objects, so more likely to
- change under your feet - but this was just due to time constraints, so
- might be worth rolling out across the board
-
- Can also be used for GET (don't download data that hasn't changed
- since the client last requested it)
+Can also be used for GET (don't download data that hasn't changed since the client last requested it)
 
 ### Preventing duplicate creates
 
- Suppose a client doesn't get a response to a POST. Should it retry?
+Suppose a client doesn't get a response to a POST. Should it retry?
 
-can't retry automatically (POST is not idempotent)
+* can't retry automatically (POST is not idempotent)
 
-  Consider using the [*post once exactly
- *](https://www.mnot.net/blog/2005/03/21/poe)pattern.
+**?** Consider using the [*post once exactly*](https://www.mnot.net/blog/2005/03/21/poe) pattern.
 
- our clients just retry (should be fairly rare, worse case is a
- duplicate document created)
+	￼POST /poe/documents	200 OK	Location: /poe/documents/291d3064-4f74-4932-bfc8-4277d441705b
 
- only a draft (not an RFC), but not updated in 10 years
+	￼￼POST /poe/documents/291d3064-4f74-4932-bfc8-4277d441705b	{"title": "Underwater basket weaving"}
+	
+	200 OK	Location: /documents/7ab2c167-8e48-4fb8-85b0-73cdb8662a64
 
- draft is slightly different (more about HTML forms) but idea is the
- same
+	￼POST /poe/documents/291d3064-4f74-4932-bfc8-4277d441705b	{"title": "Underwater basket weaving"} 
+		405 Method Not Allowed	Allow: GET
 
- in the pub?
+
+
+#### Additional notes
+our clients just retry (should be fairly rare, worse case is a
+duplicate document created)
+
+only a draft (not an RFC), but not updated in 10 years
+
+draft is slightly different (more about HTML forms) but idea is the same
+
+
 
