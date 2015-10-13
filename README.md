@@ -599,50 +599,54 @@ If you still want to introduce a custom header:
 
 ### Symmetry
 
- The body of a POST request, and the body returned on a GET request to
- the URL from the Location header, should have the same structure.
+ The body of a ```POST``` request, and the body returned on a GET request to
+ the URL from the ```Location``` header, should have the same structure.
+ 
+  			POST /things {"field": "value"} 
+ 						201 Created			Location: https://api.mendeley.com/things/291d3064-4f74-4932-bfc8-4277d441705b
+ 
+			GET /things/291d3064-4f74-4932-bfc8-4277d441705b 
+						200 OK			{"field": "value", "created": "2015-02-18T04:57:56Z"}
+
 
  GET response can have more fields, but that's OK - same structure is
  the important thing.
 
- e.g.
-
- POST /files: body is the file bytes GET /files/(id): body is the file
- bytes
-
- extra metadata (e.g. the document that the file is attached to) goes
+ e.g. some cases where this doesn't work
+ 
+ * POST /files: body is the file bytes 
+ * GET /files/(id): body is the file bytes
+ * extra metadata (e.g. the document that the file is attached to) goes
  in the headers as it's the only place left
 
 ========
 
-### Views
+## Views
 
-### Problem
+### Problems
 
-Some objects (e.g. documents) are very large
+* Some objects (e.g. documents) are very large
 
-Some clients (e.g. mobiles) don't want to download the full content
+* Some clients (e.g. mobiles) don't want to download the full content
 
-We don't want to do expensive database queries for data that the client
+* We don't want to do expensive database queries for data that the client
 doesn't need
 
 ### Solution
 
- **✔** Offer a choice of views.
+ **?** Offer a choice of views.
 
-GET /documents/291d3064-4f74-4932-bfc8-4277d441705b - returns a minimal
-set of fields
+	GET /documents/291d3064-4f74-4932-bfc8-4277d441705b - returns a minimal set of fields
 
-GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=bib - returns
-extra fields for bibliographies
+	GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=bib - returns extra fields for bibliographies
 
-GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=patent -
-returns extra fields for patents
+	GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=patent - returns extra fields for patents
 
-GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=all - returns
-the entire Montgomery
+	GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=all - returns the entire Montgomery
 
- I don't know how well this has worked in practice. Certainly internal
+
+
+**?** We don't know how well this has worked in practice. Certainly internal
  clients generally just get the "all" view
 
  Some APIs (e.g. Facebook) go one step further and let you pick exactly
@@ -657,63 +661,50 @@ the entire Montgomery
 
  **✔** Use **cursor-based** pagination. Return links to other pages (first,
  next, last, previous) in Link headers.
-
+ 
+	GET /documents	200 OK	Link: </documents?marker=291d3064-4f74-4932-bfc8-4277d441705b>; rel="next";	[	]	// do
+ 
+ 
  All of this is handled by the mendeley-pagination library.
 
  Keeps body as a representation.
 
  Works well with many HTTP clients (Jersey, Requests)
 
- Confuses some third parties who don't look at the docs (HOW VERY DARE
- THEY)
+ Confuses some third parties who don't look at the docs
 
 ========
 
 ## Bulk requests
 
- **✔** We occasionally get asked for an API like: GET
- /profiles/id1,id2,id3, to return a list of profiles by ID.
+ **X** We occasionally get asked for an API like: 
+ 
+ 		GET /profiles/id1,id2,id3, to return a list of profiles by ID.
 
-different response formats from the same URL (GET /profiles/id
+* different response formats from the same URL (GET /profiles/id shouldn't return a list)
 
-shouldn't return a list)
+* breaks cacheability
 
-breaks cacheability
+* URL doesn't represent a resource
 
-URL doesn't represent a resource
-
-URLs have a maximum length (can get about 55 UUIDs in)
-
+* URLs have a maximum length (can get about 55 UUIDs in)
 
 
-Bulk requests Continued
+Usually we get these requests because we have an API somewhere that returns a list of IDs, that should return a list of objects.
 
+In this case, our followers API was returning profile IDs - it should return profiles.
 
- Usually we get these requests because we have an API somewhere that
- returns a list of IDs, that should return a list of objects.
+**!** We do this, but I wish we didn't 
 
- In this case, our followers API was returning profile IDs - it should
- return profiles.
+	GET /followers	200 OK [	{	"profile_id": "00a4fb19-2c8f-472f-8f7f-72aa4dbf068b"	}, {	"profile_id": "231994e9-f179-4b89-a7a9-be3cadf2da4e" }	]
 
- **✔**
+**!** **We do this, but I wish we didn't **
 
- Made-up example, the real one is slightly different to this, but same
- principle.
+In this particular case we wrote a macro service to return followers and profiles. 
+At the time of writing I'm unclear as to why we could not just do this to followers instead
+of a macro service.  
 
-Bulk requests
-
- Usually we get these requests because we have an API somewhere that
- returns a list of IDs, that should return a list of objects.
-
- In this case, our followers API was returning profile IDs - it should
- return profiles.
-
- **✔**
-
- Detective work to find out what clients really want
-
- Our implementation might just get all of the individual items, but
- it's easier for us to do that in parallel than for some of our clients
+**✔**  Always favour back end doing all the parallel work rather than the client.
 
 =============
 
@@ -722,29 +713,34 @@ Bulk requests
 
 ### Problem
 
-Syncing clients (e.g. desktop) want to have all of the user's data
+* Syncing clients (e.g. desktop) want to have all of the user's data
 cached locally.
 
-Inefficient to download everything on every sync for very large
+* Inefficient to download everything on every sync for very large
 libraries.
 
 ### Solution
 
-Offer modified\_since and deleted\_since parameters on GET requests.
+* Offer ```modified_since``` and ```deleted_since``` parameters on ```GET``` requests.
 
-On each sync, the client calls the API with modified\_since set to the
+* On each sync, the client calls the API with ```modified_since``` set to the
 time that the previous sync started, then does the same for
-deleted\_since.
+```deleted_since```.
 
-This gives enough information to bring the local database up-to-date.
+* This gives enough information to bring the local database up-to-date.
 
- Large libraries: &gt;10k documents
+
+**Large libraries: &gt;10k documents**
 
 ## Synchronization - alternative
 
-  Provide an API that returns a list of changes:
+**?** This is something that we haven't done that's worth at least thinking about. It may still be a terrible idea.
+ 
+**?** Provide an API that returns a list of changes:
 
-=================
+	GET /deltas/documents?since=(timestamp)	200 OK [	{	"type": "modified", "document": {	"id": "00000000-0000-0001-0000-000000000002",	"title": "Underwater basket weaving" }	}, {	"type": "trashed", "document": {	"id": "00000000-0000-0003-0000-000000000004",	"title": "Overground bucket sawing" }	}, {	"type": "deleted", "document": {	"id": "00000000-0000-0005-0000-000000000006" }	} ]
+
+=======
 
 ## Validation errors
 
