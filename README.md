@@ -571,21 +571,29 @@ If you still want to introduce a custom header:
 
 ### Creating resources
 
- **✔** The response to a POST should be 201 Created, with a Location header
+ **✔** The response to a POST should be ```201 Created```, with a ```Location header```
  containing the URL where the resource can be found.
 
- **✔** The body should contain a representation of the resources (including
+ **!** The body should contain a representation of the resources (including
  any server-generated fields).
+ 
+	POST /things	{"field": "value"}	201 Created	Location: https://api.mendeley.com/things/291d3064-4f74-4932-bfc8-4277d441705b	{"field": "value", "created": "2015-02-18T04:57:56Z"}
+ 
+ 
 
  This means that all clients have to download the (potentially very
  large) representation, even if they don't care about the
  server-generated fields.
 
-  Use the [*HTTP Prefer *](http://tools.ietf.org/html/rfc7240)header:
+ **?**  Use the **[HTTP Prefer](http://tools.ietf.org/html/rfc7240) header**:
+ 
+		 Prefer: return=minimal		 Prefer: return=representation
 
- We didn't know about Prefer header at the time - wish we had. Gives
+ We didn't know about *Prefer* header at the time - wish we had. Gives
  clients a way to indicate whether they want to get a full
  representation or not.
+
+	
 
 ========
 
@@ -1064,5 +1072,5 @@ can't retry automatically (POST is not idempotent)
  draft is slightly different (more about HTML forms) but idea is the
  same
 
-
+ in the pub?
 
