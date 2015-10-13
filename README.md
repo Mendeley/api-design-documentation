@@ -732,7 +732,7 @@ time that the previous sync started, then does the same for
 
 **Large libraries: &gt;10k documents**
 
-## Synchronization - alternative
+### Synchronization - alternative
 
 **?** This is something that we haven't done that's worth at least thinking about. It may still be a terrible idea.
  
@@ -744,36 +744,46 @@ time that the previous sync started, then does the same for
 
 ## Validation errors
 
- **✔** We've been returning these as 400 Bad Request:
+ **X** We've been returning these as 400 Bad Request:
+ 
+ ￼		400 Bad Request		{"message": "title may not be null"}
+ 
 
  **✔** Starting to use a more specific status code, and a more structured
  response:
+ 
+ ￼		422 Unprocessable Entity		[{"field": "title", "message": "may not be null"}]
 
- Status provides context, body provides detail Should errors be
- suitable for end-users?
-
- My view - possibly, but at the very least there should be enough
- information between the message and the status code to come up with a
+ Status provides context, body provides detail 
+ 
+ **?** Should errors be suitable for end-users?
+ 
+At the very least there should be enough information between the message and the status code to come up with a
  message.
 
+=======
 
 ## Compatibility and versioning
 
- The golden rule
 
- Once we've released an API, we must not make breaking changes to it
+## The golden rule
 
-### (even if it's not being used, or if it's only deployed to staging, or if there's only one client, or if we marked it as beta, or if all of the clients are sitting in the same room as us, or if we're really-really-careful-yes-we- really-mean-it-this-time)
+ 
+  		Once we've released an API, we must NOT make breaking changes to it
 
- Client teams have felt in the past that we change APIs too often and
- that they're trying to hit a moving target.
+	(even if it's not being used, or if it's only deployed to staging, or if there's only one client, or if we marked it as beta, or if all of the 	clients are sitting in the same room as us, or if we're really-really-careful-yes-we- really-mean-it-this-time)
 
- Our culture of continuous deployment doesn't help Need to build trust
- that we're a stable platform
+ 
+Client teams have felt in the past that we change APIs too often and that they're trying to hit a moving target.
 
- Advertising instability isn't enough - people might not read the docs,
- they'll still be annoyed if it changes, and if someone builds a cool
- app on a beta API it would be a bad idea to break it.
+Our culture of continuous deployment doesn't help. Need to build trust that we're a stable platform
+
+Advertising instability isn't enough - people might not read the docs, they'll still be annoyed if it changes, and if someone builds a cool
+app on a beta API it would be a bad idea to break it.
+
+
+=======
+
 
 ## What changes are OK?
 
@@ -785,97 +795,97 @@ time that the previous sync started, then does the same for
 
  **✔** Changing the order of properties in existing API responses.
 
-  Changing the length or format of object IDs or other opaque strings.
+ **?** Changing the length or format of object IDs or other opaque strings.
 
  **✔** Fixing a 5xx server error.
 
- Aiming to give clearer guidance about what changes we'll allow
- ourselves to make - we can't expect clients to upgrade on every
- change, so need to agree guidelines so that we can make changes safely
+#### Additonal notes
 
- List originated from Stripe
+* Aiming to give clearer guidance about what changes we'll allow ourselves to make - we can't expect clients to upgrade on every
+ change, so need to agree guidelines so that we can make changes safely **Work In Progress**
 
- This is the theory - we only put this list together recently, so
- changing some of these things might break clients
+* List originated from Stripe
 
- I'm not sure we can safely change our object IDs - if they stopped
- being UUIDs then all hell would break loose
+* This is the theory - we only put this list together recently, so changing some of these things might break clients
 
- Last one is my own Kevin's hackday project
+* I'm not sure we can safely change our object IDs - if they stopped
+ being UUIDs then all hell would break loose but opaque strings should be OK (in theory)
+
+* Last one is my own Kevin's hackday project (ask Joyce Stack about this if Kevin not here)
 
 ## What changes are bad?
 
- **✔** Renaming or removing API resources.
+ **X** Renaming or removing API resources.
 
- **✔** Adding new required request parameters to existing API methods.
+ **X** Adding new required request parameters to existing API methods.
 
- **✔** Renaming, moving or removing properties from existing API responses.
+ **X** Renaming, moving or removing properties from existing API responses.
 
- **✔** Changing the structure of an API response (e.g. list -&gt; object).
+ **X** Changing the structure of an API response (e.g. list -&gt; object).
 
- **✔** Changing the status code of an API response (in general).
+ **X** Changing the status code of an API response (in general).
 
- There might be some cases where it's OK to replace one error with a
+
+**?** There might be some cases where it's OK to replace one error with a
  different one. Needs to be thought about.
 
 ## How can I make breaking changes?
 
- Before we've publicly released an API:
+Before we've publicly released an API:
 
-Announce plans to affected client teams, and get their agreement.
+* Talk to the API Steering Group (see Wiki)
 
-Run old and new in parallel for a week.
+* Announce plans to affected client teams, and get their agreement.
 
-Switch off the old.
+* Run old and new in parallel for a week.
 
- This is what we've done - clients much preferred it to us changing
- things under their feet
+* Switch off the old.
 
- Do this even if you've only got one client and they can move quickly -
- better to play by our own rules and build trust
 
- Communication is key
+This is what we've done - clients much preferred it to us changing things under their feet
 
- This approach might be suitable for things we've released externally
- and marked as beta - but still need to notify everyone (not just
- people who've hit it - we won't build trust unless we're seen to be
- following our own rules).
+Do this even if you've only got one client and they can move quickly - better to play by our own rules and build trust
+
+Communication is key
+
+This approach might be suitable for things we've released externally and marked as beta - but still need to notify everyone (not just
+people who've hit it - we won't build trust unless we're seen to be following our own rules).
 
 ## How can I make breaking changes?
 
- After we've publicly released an API:
+After we've publicly released an API:
 
 We haven't done this yet.
+Some thoughts:
 
- Some thoughts:
-
-  Offer the new version under a different content type
+ **?** Offer the new version under a different content type
  (application/vnd.mendeley-document.2+json).
 
- **✔** Put new versions under different URLs.
+ **X** Put new versions under different URLs.
 
  **✔** Blackout tests.
 
-  Consider client release cycles, and monitor usage.
+ **?** Consider client release cycles, and monitor usage.
 
- Same principle (run old and new together) but need to allow much more
- time
+Same principle (run old and new together) but need to allow much more
+time
 
- We've put version numbers in our content types, but yet to see whether
- it'll work in practice.
+We've put version numbers in our content types, but yet to see whether
+it'll work in practice.
 
- I'm concerned we're putting too much significance on "version 2" -
- some other APIs version with dates so that they're less attached to
- them. Would be a shame if we couldn't make breaking changes before a
- significant release.
+I'm concerned we're putting too much significance on "version 2" -
+some other APIs version with dates so that they're less attached to
+them. Would be a shame if we couldn't make breaking changes before a
+significant release.
 
- Don't change URLs - the resources themselves haven't changed, just
- their representations
+Don't change URLs - the resources themselves haven't changed, just
+their representations
 
- Communication, communication, communication
+**Communication, communication, communication**
 
+========
 
-### Gnarly Bits
+## Gnarly Bits
 
 ## Trash
 
