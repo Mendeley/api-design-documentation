@@ -339,7 +339,9 @@ status.
 ## HTTP Methods 
 
 
- ```GET``` - Fetch a representation of the resource at the URI.
+ ```GET``` 
+ 
+ 	* Fetch a representation of the resource at the URI.
 
 ``` POST``` - Store the enclosed entity as a subresource of the resource at the URI.
 
@@ -358,17 +360,18 @@ status.
 
 A method is **safe** if it has no side effects.
 
-* ```GET```
-	* retrying has same response 	
+ ```GET```
+	
+* retrying has same response 	
 
 A method is **idempotent** if the side effects of repeating the
 request are the same as for a single request.
 
-* ```GET```
+ ```GET```
 
-* ```PUT```
+ ```PUT```
 
-* ```DELETE```
+ ```DELETE```
 
 	* retrying may have different response (e.g. already deleted), but doesn't make any material difference
 
