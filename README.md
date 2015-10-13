@@ -358,26 +358,26 @@ status.
 
 A method is **safe** if it has no side effects.
 
- ```GET```		
+GET	
 
 * retrying has same response 	
 
 A method is **idempotent** if the side effects of repeating the
 request are the same as for a single request.
 
- ```GET```
+GET
 
- ```PUT```
+PUT
 
- ```DELETE```
+DELETE
 
 * retrying may have different response (e.g. already deleted), but doesn't make any material difference
 
 Otherwise, no guarantees about what repeating a request will do.
 
- ```POST```
+POST
 
- ```PATCH``` (but often idempotent in practice)
+PATCH (but often idempotent in practice)
 
 * won't be retried
 
