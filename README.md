@@ -781,7 +781,7 @@ app on a beta API it would be a bad idea to break it.
 =======
 
 
-## What changes are OK?
+### What changes are OK?
 
  **✔** Adding new API resources.
 
@@ -809,7 +809,7 @@ app on a beta API it would be a bad idea to break it.
 
 * Last one is my own Kevin's hackday project (ask Joyce Stack about this if Kevin not here)
 
-## What changes are bad?
+### What changes are bad?
 
  **X** Renaming or removing API resources.
 
@@ -825,7 +825,7 @@ app on a beta API it would be a bad idea to break it.
 **?** There might be some cases where it's OK to replace one error with a
  different one. Needs to be thought about.
 
-## How can I make breaking changes?
+### How can I make breaking changes?
 
 Before we've publicly released an API:
 
@@ -847,7 +847,7 @@ Communication is key
 This approach might be suitable for things we've released externally and marked as beta - but still need to notify everyone (not just
 people who've hit it - we won't build trust unless we're seen to be following our own rules).
 
-## How can I make breaking changes?
+### How can I make breaking changes?
 
 After we've publicly released an API:
 
@@ -890,124 +890,122 @@ their representations
 
 Many clients don't care about the trash, and they shouldn't need to.
 
-Split documents into /documents and /trash URLs
+Split documents into ```/documents``` and ```/trash`` URLs
 
-State transitions
+**State transitions**
 
- ![](images/image6.png)
+ ![](images/state-transtions-trash.png)
  
- ￼![alt text](/images/icon48.png "Logo Title Text 1")
+ 
+Split also allows us to show, at the API level, that trashed documents can't be modified (no PATCH /trash/(id))
 
 
- Split also allows us to show, at the API level, that trashed documents
- can't be modified (no PATCH /trash/(id))
+**Problems with this:**
+
+* A syncing client that doesn't care about trash still needs to call ```GET /trash?modified_since=...```, 
+to find out what things have been moved to the trash.
+
+* Every group has its own trash, but this isn't reflected in the desktop UI.
+
+* Trash leaks out into other resources - should ```GET /files``` include files attached to trashed documents?
+
+	* We decided it shouldn't, unless you add ```?include_trashed=true```.
 
 
- Problems with this:
+**?** "Every group has its own trash" - was a surprise to us, caused issues with web library
 
-A syncing client that doesn't care about trash still needs to call GET
-/trash? modified\_since=..., to find out what things have been moved to
-the trash.
+**Everything is connected**
 
-Every group has its own trash, but this isn't reflected in the desktop
-UI.
+ ![](images/everythings-connected.png)
 
-Trash leaks out into other resources - should GET /files include files
-attached to trashed documents?
+Diagram shows core API resources - documents, files, folders, annotations, profiles, groups
 
- We decided it shouldn't, unless you add ?include\_trashed=true.
+Arrows show where one references another (e.g. a document is in a group) 
 
+Something to watch when changing things (changes can be wide-reaching) 
+ 
+Try not to couple new stuff in so closely
 
- "Every group has its own trash" - was a surprise to us, caused issues
- with web library
-
- Everything is connected
-
- ![](media/image7.jpeg)
-
- Diagram shows core API resources - documents, files, folders,
- annotations, profiles, groups
-
- Arrows show where one references another (e.g. a document is in a**✔**
- group) Something to watch when changing things (changes can be
- wide-reaching) Try not to couple new stuff in so closely
+=========================
 
 ## Dates
 
- **✔** Use ISO 8601 format for dates and times: 2015-02-18T04:57:56Z
+**✔** Use ISO 8601 format for dates and times: 2015-02-18T04:57:56Z
 
- **✔** Unfortunately, some standard HTTP headers use their own (really
- ugly) format, defined in RFC 2822: Thu, 01 May 2014 10:07:28 GMT
+**!** Unfortunately, some standard HTTP headers use their own (really ugly) format, 
+defined in RFC 2822: Thu, 01 May 2014 10:07:28 GMT
 
- This is annoying for clients, but can't be helped.
+This is annoying for clients, but can't be helped.
 
- **✔** Use server-generated dates everywhere - the server is the only
- reliable clock.
+**✔** Use server-generated dates everywhere - the server is the only reliable clock.
 
- Annoying but not too hard - all of the languages I tried can convert
- dates in one or two lines
+Annoying but not too hard - most languages can convert dates in one or two lines
 
- Could use RFC 2822 everywhere, but ugly and locale-specific
+Could use [RFC 2822](https://tools.ietf.org/html/rfc2822) everywhere, but ugly and locale-specific
 
+=========================
+ 
 ## Side effects
 
- Beware of cases where PATCH /resource1 can affect the state of
- /resource2.
+ Beware of cases where ```PATCH /resource1``` can affect the state of ```/resource2```.
 
  Try to decouple into two operations, so that the client has to be
  explicit about updating both - but often this is not possible.
 
- **✔** I don't have a good answer for this.
+ **✔** We don't have a good answer for this.
  
  =========================
 
 ## Client-specific behaviour
 
- There are too many places in the API where different clients get
- different behaviour.
+There are too many places in the API where different clients get
+different behaviour.
 
- Things we've done:
+Things we've done (**!** We do all of this, but we wish we didn't ):
 
- **✔** added extra "client data" fields, for specific clients to store
- their own attributes
+* added extra "client data" fields, for specific clients to store
+their own attributes 
 
- **✔** restricted certain endpoints to particular client IDs (lots of
- whitelists spread through the code)
+		￼{		"title": "Underwater basket weaving", 
+				"client_data":"{\"desktop_id\":\"1bcd0e7c-5846-4c22-bed8-cc3d5685ef4a\"}"		}
 
- **✔** kept some endpoints quiet in the hope that no-one else would find
- them
+* restricted certain endpoints to particular client IDs (lots of
+whitelists spread through the code)
 
- Too many "whitelists"
+* kept some endpoints quiet in the hope that no-one else would find
+them
 
- What if we had to change the desktop client ID? How many code changes
- would we have to deploy to keep it working, and do we even know what
- they all are?
+#### Additional notes
 
- Client-specific behaviour
+Too many "whitelists"
 
- What to do about this?
+What if we had to change the desktop client ID? How many code changes
+would we have to deploy to keep it working, and do we even know what
+they all are?
 
-Ideally, nothing - if we're willing to put it into a client, it should
-go in the API.
 
-Exceptions to the above:
+#### What to do about this?
 
- if you're building a platform-internal service that doesn't form part
- of the client API
+* Ideally, nothing - if we're willing to put it into a client, it should go in the API.
 
- if there are lawyers at your desk and they want to have a meeting
+* Exceptions to the above:
 
-  If we really have to lock down a service down, consider using OAuth
- scopes.
+	* if you're building a platform-internal service that doesn't form part
+	of the client API
+	
+	* if there are lawyers at your desk and they want to have a meeting
+
+ If we really have to lock down a service down, consider using OAuth
+scopes.
 
 clients request the specific extra privileges that they need
 
 OAuth database says which clients are allowed which scopes - avoids
 having whitelists spread through lots of services
 
- platform-only
+platform-only
 
- allows reuse along microservice boundaries restrict based on client ID
+allows reuse along microservice boundaries restrict based on client ID
  
  
  =========================
