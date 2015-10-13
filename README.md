@@ -339,28 +339,20 @@ status.
 ## HTTP Methods 
 
 
- ```GET```
+ ```GET``` - Fetch a representation of the resource at the URI.
 
-* Fetch a representation of the resource at the URI.
+``` POST``` - Store the enclosed entity as a subresource of the resource at the URI.
 
-``` POST```
+``` PUT``` - Store the enclosed entity under the URI.
 
-* Store the enclosed entity as a subresource of the resource at the URI.
+``` DELETE``` - Delete the resource at the URI.
 
-``` PUT```
+``` PATCH``` - Apply partial modifications to the resource at the URI.
+	
+	
+** PATCH wasn't in the original specification, but we use it.**
 
-* Store the enclosed entity under the URI.
-
-``` DELETE```
-
-* Delete the resource at the URI.
-
-``` PATCH```
-
-* Apply partial modifications to the resource at the URI.
-	* PATCH wasn't in the original specification, but we use it.
-
-
+======== 
 
 ### Safety and idempotency
 
