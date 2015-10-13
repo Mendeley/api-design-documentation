@@ -764,7 +764,10 @@ At the very least there should be enough information between the message and the
  
   		Once we've released an API, we must NOT make breaking changes to it
 
-	(even if it's not being used, or if it's only deployed to staging, or if there's only one client, or if we marked it as beta, or if all of the 	clients are sitting in the same room as us, or if we're really-really-careful-yes-we- really-mean-it-this-time)
+		(even if it's not being used, or if it's only deployed to staging, 
+		or if there's only one client, or if we marked it as beta, 
+		or if all of the clients are sitting in the same room as us, 
+		or if we're really-really-careful-yes-we- really-mean-it-this-time)
 
  
 Client teams have felt in the past that we change APIs too often and that they're trying to hit a moving target.
