@@ -739,7 +739,7 @@ time that the previous sync started, then does the same for ```deleted_since```.
 
  **X** We've been returning these as 400 Bad Request:
  
- ￼		400 Bad Request		{"message": "title may not be null"}
+ 		400 Bad Request		{"message": "title may not be null"}
  
 
  **✔** Starting to use a more specific status code, and a more structured
@@ -883,19 +883,21 @@ their representations
 
 ## Gnarly Bits
 
-## Trash
+### Trash
 
 
+**Goal**
 
- Goal
+Many clients don't care about the trash, and they shouldn't need to.
 
- Many clients don't care about the trash, and they shouldn't need to.
- Split documents into /documents and /trash URLs
+Split documents into /documents and /trash URLs
 
 State transitions
------------------
 
- ![](media/image6.png)
+ ![](images/image6.png)
+ 
+ ￼![alt text](/images/icon48.png "Logo Title Text 1")
+
 
  Split also allows us to show, at the API level, that trashed documents
  can't be modified (no PATCH /trash/(id))
