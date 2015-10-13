@@ -356,14 +356,14 @@ status.
 
 ### Safety and idempotency
 
-A method is **safe** if it has no side effects.*
+A method is **safe** if it has no side effects.
 
  ```GET```		
 
 * retrying has same response 	
 
 A method is **idempotent** if the side effects of repeating the
-request are the same as for a single request.*
+request are the same as for a single request.
 
  ```GET```
 
