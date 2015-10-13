@@ -72,7 +72,7 @@ This document is intended for any developer who is writing an API.
 	
 * Programming languages - languages: not all languages have the same support for concurrency/HTTP features
 
-* Syncing vs non-syncing - Getting lots of data vs on-demand
+* Syncing vs non-syncing - getting lots of data vs on-demand
 
 * Release cycles -  can vary widely between webapps (days) and installed apps (months when you consider how long it takes people to upgrade)
 
@@ -338,23 +338,23 @@ status.
  
 ## HTTP Methods 
 
-### GET
+ ```GET```
 
 * Fetch a representation of the resource at the URI.
 
-### POST
+``` POST```
 
 * Store the enclosed entity as a subresource of the resource at the URI.
 
-### PUT
+``` PUT```
 
 * Store the enclosed entity under the URI.
 
-### DELETE
+``` DELETE```
 
 * Delete the resource at the URI.
 
-### PATCH
+``` PATCH```
 
 * Apply partial modifications to the resource at the URI.
 	* PATCH wasn't in the original specification, but we use it.
@@ -365,25 +365,25 @@ status.
 
 A method is **safe** if it has no side effects.
 
-* GET
+* ```GET```
 	* retrying has same response 	
 
 A method is **idempotent** if the side effects of repeating the
 request are the same as for a single request.
 
-* GET
+* ```GET```
 
-* PUT
+* ```PUT```
 
-* DELETE
+* ```DELETE```
 
 	* retrying may have different response (e.g. already deleted), but doesn't make any material difference
 
 Otherwise, no guarantees about what repeating a request will do.
 
-* POST
+* ```POST```
 
-* PATCH (but often idempotent in practice)
+* ```PATCH``` (but often idempotent in practice)
 
 	* won't be retried
 
@@ -392,24 +392,24 @@ Clients can use these facts to decide whether to retry a request.
 
 ### Which one to use?
 
-* Use GET for retrieving data.
+* Use ```GET``` for retrieving data.
 
 * Use POST for creating a new resource (not idempotent - multiple POSTs
 create multiple resources).
 
 * For updates:
 
- 	* PUT - replace the whole resource with this representation. 
- 	* PATCH - replace only the fields that are in the body.
+ 	* ```PUT``` - replace the whole resource with this representation. 
+ 	* ```PATCH``` - replace only the fields that are in the body.
 
-We prefer PATCH to PUT for updates. **✔** We do this, we like it.
+We prefer ```PATCH``` to ```PUT``` for updates. **✔** We do this, we like it.
  
 * Reduce window conditions caused by concurrent updates (more on this
 later).
 
 * Don't need to have the whole resource in hand to do an update.
 
-* Can still get PUT-like semantics by sending the whole object.
+* Can still ```GET``` ```PUT```-like semantics by sending the whole object.
 
 * In reality, the client doesn't replace the whole resource anyway (e.g.
 last modified time).
@@ -420,28 +420,28 @@ last modified time).
 ## Specials
 
 
-### OPTIONS
+``` OPTIONS```
 
 Returns details about what requests will be accepted for a URL.
 
 **✔** Used for CORS (more later).
 
-### HEAD
+``` HEAD```
 
-Identical to GET, but returns only the headers, not the body.
+Identical to ```GET```, but returns only the headers, not the body.
 
-**?** Clients could use this to get pagination counts, but we haven't
+**?** Clients could use this to ```GET``` pagination counts, but we haven't
 implemented that.
 
 ========
 
 ## Oddities
 
-### CONNECT
+``` CONNECT```
 
 **X** Converts the connection to a transparent TCP/IP tunnel.
 
-### TRACE
+``` TRACE```
 
 Echoes the request back, so that the client can see what intermediate
 servers have done.
@@ -461,4 +461,608 @@ make it into the HTTP spec.
 ### MISCELLANEOUSOTHERTHING
 
 **X** You can make up your own methods, but please don't.
+
+========
+
+## CORS (cross-origin resource sharing)
+
+* Ordinarily, web browsers block JavaScript from making HTTP requests to
+different domains, for security reasons.
+
+* CORS is a way that browsers can negotiate with an API about whether
+they're allowed to make a request.
+
+
+
+		OPTIONS /documents		Origin: app.example.com 		Access-Control-Request-Method: POST 		Access-Control-Request-Headers: Authorization		200 OK		Access-Control-Allow-Origin: app.example.com 		Access-Control-Allow-Methods: POST 		Access-Control-Allow-Headers: Authorization
+
+
+
+ **✔** CORS is enabled across our API, and is used in the web library.
+ 
+ [*More info
+ (Wikipedia)*](http://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
+
+ * Some APIs make you opt in to CORS, or specify the domain you want to use - we weren't aware of any reason to restrict it.
+
+========
+
+## Status codes (needs expansion)
+
+**✔** Use the right status code. 
+ 
+* Well-behaved client might want to retry on a 5xx (limited number of
+ times, backoff), but shouldn't on a 4xx (definition of insanity)
+
+* Beyond that, use the most appropriate code. Not going to give a list
+ here (many in RFC 7231, many spread around other specs Wikipedia has a
+ good list, as does appendix A of the book), but they all have very
+ specific meanings, so read them and pick the most appropriate one.
+
+========
+
+## Headers
+
+
+ * Method is the verb, URL identifies a resource, body contains a
+ representation, so headers are the only other place to indicate how a
+ message should be processed - use them
+
+ Not going to go into lots of detail here - just mention a few patterns
+
+
+### Media types
+
+ **✔** Resources should have a vendor-specific media type.
+
+ 	Content-Type: application/vnd.mendeley-document.1+json
+
+* The "1" is a version number.
+
+* Media type represents a JSON format on the wire, not the class in your
+implementation.
+
+ 	* A GET and a PATCH should share a media type, even if the PATCH has
+ fewer fields.
+
+* Try to re-use media types between services.
+
+ **✔** It's possible to route requests to different services based on the
+ media type.
+
+ * Will almost always be JSON. Only exception I'm aware of is BibTeX.
+
+ ## Links
+
+ **✔** Use Link headers to indicate when one resource is linked to another.
+
+ **✔** Link headers are allowed (and useful) on requests as well as
+ responses. For example:
+
+========
+
+## Custom headers
+
+ **✔** Use standard headers wherever you can. Appendix B of the RESTful Web
+ APIs book contains a handy list.
+
+If you want to introduce a custom header:
+
+* read appendix B of the RESTful Web APIs book.
+
+* think really hard about whether you still need it.
+
+* read appendix B of the RESTful Web APIs book again.
+
+If you still want to introduce a custom header:
+
+* give it a name starting with Mendeley-.
+
+ 	*✔**   ```Mendeley-Count ```
+
+ 	**!**  ```X-Mendeley-TraceID``` (We do this, but I wish we didn't)
+
+ ** Headers starting with "X-" used to be a best practice, but now
+ considered deprecated - [RFC 6648](https://tools.ietf.org/html/rfc6648)**
+ 
+========
+
+## Common patterns 
+
+### Creating resources
+
+ **✔** The response to a POST should be 201 Created, with a Location header
+ containing the URL where the resource can be found.
+
+ **✔** The body should contain a representation of the resources (including
+ any server-generated fields).
+
+ This means that all clients have to download the (potentially very
+ large) representation, even if they don't care about the
+ server-generated fields.
+
+  Use the [*HTTP Prefer *](http://tools.ietf.org/html/rfc7240)header:
+
+ We didn't know about Prefer header at the time - wish we had. Gives
+ clients a way to indicate whether they want to get a full
+ representation or not.
+
+========
+
+### Symmetry
+
+ The body of a POST request, and the body returned on a GET request to
+ the URL from the Location header, should have the same structure.
+
+ GET response can have more fields, but that's OK - same structure is
+ the important thing.
+
+ e.g.
+
+ POST /files: body is the file bytes GET /files/(id): body is the file
+ bytes
+
+ extra metadata (e.g. the document that the file is attached to) goes
+ in the headers as it's the only place left
+
+========
+
+### Views
+
+### Problem
+
+Some objects (e.g. documents) are very large
+
+Some clients (e.g. mobiles) don't want to download the full content
+
+We don't want to do expensive database queries for data that the client
+doesn't need
+
+### Solution
+
+ **✔** Offer a choice of views.
+
+GET /documents/291d3064-4f74-4932-bfc8-4277d441705b - returns a minimal
+set of fields
+
+GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=bib - returns
+extra fields for bibliographies
+
+GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=patent -
+returns extra fields for patents
+
+GET /documents/291d3064-4f74-4932-bfc8-4277d441705b?view=all - returns
+the entire Montgomery
+
+ I don't know how well this has worked in practice. Certainly internal
+ clients generally just get the "all" view
+
+ Some APIs (e.g. Facebook) go one step further and let you pick exactly
+ which fields you want
+
+========
+
+## Pagination
+
+ All APIs that return a collection must have an upper bound on the
+ number of items in the response.
+
+ **✔** Use **cursor-based** pagination. Return links to other pages (first,
+ next, last, previous) in Link headers.
+
+ All of this is handled by the mendeley-pagination library.
+
+ Keeps body as a representation.
+
+ Works well with many HTTP clients (Jersey, Requests)
+
+ Confuses some third parties who don't look at the docs (HOW VERY DARE
+ THEY)
+
+========
+
+## Bulk requests
+
+ **✔** We occasionally get asked for an API like: GET
+ /profiles/id1,id2,id3, to return a list of profiles by ID.
+
+different response formats from the same URL (GET /profiles/id
+
+shouldn't return a list)
+
+breaks cacheability
+
+URL doesn't represent a resource
+
+URLs have a maximum length (can get about 55 UUIDs in)
+
+
+
+Bulk requests Continued
+
+
+ Usually we get these requests because we have an API somewhere that
+ returns a list of IDs, that should return a list of objects.
+
+ In this case, our followers API was returning profile IDs - it should
+ return profiles.
+
+ **✔**
+
+ Made-up example, the real one is slightly different to this, but same
+ principle.
+
+Bulk requests
+
+ Usually we get these requests because we have an API somewhere that
+ returns a list of IDs, that should return a list of objects.
+
+ In this case, our followers API was returning profile IDs - it should
+ return profiles.
+
+ **✔**
+
+ Detective work to find out what clients really want
+
+ Our implementation might just get all of the individual items, but
+ it's easier for us to do that in parallel than for some of our clients
+
+=============
+
+
+## Synchronization
+
+### Problem
+
+Syncing clients (e.g. desktop) want to have all of the user's data
+cached locally.
+
+Inefficient to download everything on every sync for very large
+libraries.
+
+### Solution
+
+Offer modified\_since and deleted\_since parameters on GET requests.
+
+On each sync, the client calls the API with modified\_since set to the
+time that the previous sync started, then does the same for
+deleted\_since.
+
+This gives enough information to bring the local database up-to-date.
+
+ Large libraries: &gt;10k documents
+
+## Synchronization - alternative
+
+  Provide an API that returns a list of changes:
+
+=================
+
+## Validation errors
+
+ **✔** We've been returning these as 400 Bad Request:
+
+ **✔** Starting to use a more specific status code, and a more structured
+ response:
+
+ Status provides context, body provides detail Should errors be
+ suitable for end-users?
+
+ My view - possibly, but at the very least there should be enough
+ information between the message and the status code to come up with a
+ message.
+
+
+## Compatibility and versioning
+
+ The golden rule
+
+ Once we've released an API, we must not make breaking changes to it
+
+### (even if it's not being used, or if it's only deployed to staging, or if there's only one client, or if we marked it as beta, or if all of the clients are sitting in the same room as us, or if we're really-really-careful-yes-we- really-mean-it-this-time)
+
+ Client teams have felt in the past that we change APIs too often and
+ that they're trying to hit a moving target.
+
+ Our culture of continuous deployment doesn't help Need to build trust
+ that we're a stable platform
+
+ Advertising instability isn't enough - people might not read the docs,
+ they'll still be annoyed if it changes, and if someone builds a cool
+ app on a beta API it would be a bad idea to break it.
+
+## What changes are OK?
+
+ **✔** Adding new API resources.
+
+ **✔** Adding new optional request parameters to existing API methods.
+
+ **✔** Adding new properties to existing API responses.
+
+ **✔** Changing the order of properties in existing API responses.
+
+  Changing the length or format of object IDs or other opaque strings.
+
+ **✔** Fixing a 5xx server error.
+
+ Aiming to give clearer guidance about what changes we'll allow
+ ourselves to make - we can't expect clients to upgrade on every
+ change, so need to agree guidelines so that we can make changes safely
+
+ List originated from Stripe
+
+ This is the theory - we only put this list together recently, so
+ changing some of these things might break clients
+
+ I'm not sure we can safely change our object IDs - if they stopped
+ being UUIDs then all hell would break loose
+
+ Last one is my own Kevin's hackday project
+
+## What changes are bad?
+
+ **✔** Renaming or removing API resources.
+
+ **✔** Adding new required request parameters to existing API methods.
+
+ **✔** Renaming, moving or removing properties from existing API responses.
+
+ **✔** Changing the structure of an API response (e.g. list -&gt; object).
+
+ **✔** Changing the status code of an API response (in general).
+
+ There might be some cases where it's OK to replace one error with a
+ different one. Needs to be thought about.
+
+## How can I make breaking changes?
+
+ Before we've publicly released an API:
+
+Announce plans to affected client teams, and get their agreement.
+
+Run old and new in parallel for a week.
+
+Switch off the old.
+
+ This is what we've done - clients much preferred it to us changing
+ things under their feet
+
+ Do this even if you've only got one client and they can move quickly -
+ better to play by our own rules and build trust
+
+ Communication is key
+
+ This approach might be suitable for things we've released externally
+ and marked as beta - but still need to notify everyone (not just
+ people who've hit it - we won't build trust unless we're seen to be
+ following our own rules).
+
+## How can I make breaking changes?
+
+ After we've publicly released an API:
+
+We haven't done this yet.
+
+ Some thoughts:
+
+  Offer the new version under a different content type
+ (application/vnd.mendeley-document.2+json).
+
+ **✔** Put new versions under different URLs.
+
+ **✔** Blackout tests.
+
+  Consider client release cycles, and monitor usage.
+
+ Same principle (run old and new together) but need to allow much more
+ time
+
+ We've put version numbers in our content types, but yet to see whether
+ it'll work in practice.
+
+ I'm concerned we're putting too much significance on "version 2" -
+ some other APIs version with dates so that they're less attached to
+ them. Would be a shame if we couldn't make breaking changes before a
+ significant release.
+
+ Don't change URLs - the resources themselves haven't changed, just
+ their representations
+
+ Communication, communication, communication
+
+
+### Gnarly Bits
+
+## Trash
+
+
+
+ Goal
+
+ Many clients don't care about the trash, and they shouldn't need to.
+ Split documents into /documents and /trash URLs
+
+State transitions
+-----------------
+
+ ![](media/image6.png)
+
+ Split also allows us to show, at the API level, that trashed documents
+ can't be modified (no PATCH /trash/(id))
+
+
+ Problems with this:
+
+A syncing client that doesn't care about trash still needs to call GET
+/trash? modified\_since=..., to find out what things have been moved to
+the trash.
+
+Every group has its own trash, but this isn't reflected in the desktop
+UI.
+
+Trash leaks out into other resources - should GET /files include files
+attached to trashed documents?
+
+ We decided it shouldn't, unless you add ?include\_trashed=true.
+
+
+ "Every group has its own trash" - was a surprise to us, caused issues
+ with web library
+
+ Everything is connected
+
+ ![](media/image7.jpeg)
+
+ Diagram shows core API resources - documents, files, folders,
+ annotations, profiles, groups
+
+ Arrows show where one references another (e.g. a document is in a**✔**
+ group) Something to watch when changing things (changes can be
+ wide-reaching) Try not to couple new stuff in so closely
+
+## Dates
+
+ **✔** Use ISO 8601 format for dates and times: 2015-02-18T04:57:56Z
+
+ **✔** Unfortunately, some standard HTTP headers use their own (really
+ ugly) format, defined in RFC 2822: Thu, 01 May 2014 10:07:28 GMT
+
+ This is annoying for clients, but can't be helped.
+
+ **✔** Use server-generated dates everywhere - the server is the only
+ reliable clock.
+
+ Annoying but not too hard - all of the languages I tried can convert
+ dates in one or two lines
+
+ Could use RFC 2822 everywhere, but ugly and locale-specific
+
+## Side effects
+
+ Beware of cases where PATCH /resource1 can affect the state of
+ /resource2.
+
+ Try to decouple into two operations, so that the client has to be
+ explicit about updating both - but often this is not possible.
+
+ **✔** I don't have a good answer for this.
+ 
+ =========================
+
+## Client-specific behaviour
+
+ There are too many places in the API where different clients get
+ different behaviour.
+
+ Things we've done:
+
+ **✔** added extra "client data" fields, for specific clients to store
+ their own attributes
+
+ **✔** restricted certain endpoints to particular client IDs (lots of
+ whitelists spread through the code)
+
+ **✔** kept some endpoints quiet in the hope that no-one else would find
+ them
+
+ Too many "whitelists"
+
+ What if we had to change the desktop client ID? How many code changes
+ would we have to deploy to keep it working, and do we even know what
+ they all are?
+
+ Client-specific behaviour
+
+ What to do about this?
+
+Ideally, nothing - if we're willing to put it into a client, it should
+go in the API.
+
+Exceptions to the above:
+
+ if you're building a platform-internal service that doesn't form part
+ of the client API
+
+ if there are lawyers at your desk and they want to have a meeting
+
+  If we really have to lock down a service down, consider using OAuth
+ scopes.
+
+clients request the specific extra privileges that they need
+
+OAuth database says which clients are allowed which scopes - avoids
+having whitelists spread through lots of services
+
+ platform-only
+
+ allows reuse along microservice boundaries restrict based on client ID
+ 
+ 
+ =========================
+
+## Race Conditions
+
+ No locking/synchronization on an API State can change between calls
+
+ Here are some tactics that can help
+
+### Concurrent updates
+
+ Remember the semantics of PUT and PATCH:
+
+PUT - replace the whole resource with this representation.
+
+PATCH - replace only the fields that are in the body.
+
+ Suppose that two clients want to update different fields on the same
+ resource.
+
+PUT - both send in the full object, and the second one will overwrite
+the first one's changes.
+
+PATCH - both send in only the field they want to update, and both
+updates are applied correctly.
+
+ **✔** If used like this, PATCH helps to reduce (but not avoid) race
+ conditions.
+
+ **✔** However, most of our clients use PATCH like PUT (sending the whole
+ representation every time), so they don't get this benefit.
+**✔**
+
+
+ **✔** Clients that want PUT-like semantics, but want to avoid lost
+ updates, can specify the timestamp of the previous time they retrieved
+ a resource.
+
+ (see also: ETags).
+
+  Could make this required, and send back 428 Precondition Required if
+ there is no If-Unmodified-Since header.
+
+ Only implemented for documents - bigger objects, so more likely to
+ change under your feet - but this was just due to time constraints, so
+ might be worth rolling out across the board
+
+ Can also be used for GET (don't download data that hasn't changed
+ since the client last requested it)
+
+### Preventing duplicate creates
+
+ Suppose a client doesn't get a response to a POST. Should it retry?
+
+can't retry automatically (POST is not idempotent)
+
+  Consider using the [*post once exactly
+ *](https://www.mnot.net/blog/2005/03/21/poe)pattern.
+
+ our clients just retry (should be fairly rare, worse case is a
+ duplicate document created)
+
+ only a draft (not an RFC), but not updated in 10 years
+
+ draft is slightly different (more about HTML forms) but idea is the
+ same
+
+
 
