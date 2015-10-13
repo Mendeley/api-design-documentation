@@ -338,6 +338,7 @@ status.
  
 ## HTTP Methods 
 
+
  ```GET```
 
 * Fetch a representation of the resource at the URI.
