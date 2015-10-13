@@ -414,13 +414,13 @@ last modified time).
 ## Specials
 
 
-``` OPTIONS```
+OPTIONS
 
 Returns details about what requests will be accepted for a URL.
 
 **✔** Used for CORS (more later).
 
-``` HEAD```
+HEAD
 
 Identical to ```GET```, but returns only the headers, not the body.
 
@@ -431,11 +431,11 @@ implemented that.
 
 ## Oddities
 
-``` CONNECT```
+CONNECT
 
 **X** Converts the connection to a transparent TCP/IP tunnel.
 
-``` TRACE```
+TRACE
 
 Echoes the request back, so that the client can see what intermediate
 servers have done.
