@@ -718,8 +718,7 @@ libraries.
 * Offer ```modified_since``` and ```deleted_since``` parameters on ```GET``` requests.
 
 * On each sync, the client calls the API with ```modified_since``` set to the
-time that the previous sync started, then does the same for
-```deleted_since```.
+time that the previous sync started, then does the same for ```deleted_since```.
 
 * This gives enough information to bring the local database up-to-date.
 
