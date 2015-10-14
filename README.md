@@ -82,11 +82,9 @@ Why?
 
 To avoid [bikeshedding](https://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality) arguments and to aid a positive developer experience (DX).
 
-\#\# Current Maintainer 
+Current Maintainer is Joyce Stack
 
-Joyce Stack
-
-Original documented drafted and attributed to Matt Thomson.
+Original documented drafted and attributed to Matt Thomson in 2014. 
 
 ----------------------
 
