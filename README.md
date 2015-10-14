@@ -1,21 +1,15 @@
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 - [API Design & Best Practices](#)
-- [](#undefined)
 	- [Current Maintainer](#)
-- [](#undefined)
 	- [Who should read this document?](#)
-- [](#undefined)
 	- [Conventions used](#)
-- [](#undefined)
 	- [General Advice](#)
-- [](#undefined)
 	- [Guiding principles](#)
 		- [Support a wide range of clients](#)
 		- [Be consistent](#)
 		- [Include all non-trivial business logic](#)
 		- [Follow standards pragmatically](#)
-- [](#undefined)
 	- [REST](#)
 		- [What is REST?](#)
 		- [REST constraints](#)
@@ -23,10 +17,8 @@
 		- [Addiontal notes on Uniform Interface](#)
 		- [What does this mean in practice?](#)
 		- [Hypermedia](#)
-- [](#undefined)
 	- [HTTP](#)
 		- [Use the right spec](#)
-- [](#undefined)
 	- [URLs](#)
 		- [Basics](#)
 		- [Filter with query parameters](#)
@@ -34,7 +26,6 @@
 		- [If you have to nest](#)
 		- [Actions](#)
 		- [Looking up by a secondary ID](#)
-- [](#undefined)
 	- [HTTP Methods](#)
 		- [Safety and idempotency](#)
 		- [Which one to use?](#)
@@ -59,7 +50,6 @@
 		- [Solution](#)
 		- [Synchronization - alternative](#)
 		- [Validation errors](#)
-- [](#undefined)
 	- [Compatibility and versioning](#)
 		- [The golden rule](#)
 		- [What changes are OK?](#)
@@ -69,12 +59,13 @@
 		- [Trash](#)
 		- [Dates](#)
 		- [Side effects](#)
-- [](#undefined)
 	- [Client-specific behaviour](#)
 	- [Race Conditions](#)
 		- [Concurrent updates](#)
 		- [Preventing duplicate creates](#)
 
+
+============
 
 # API Design & Best Practices 
 
