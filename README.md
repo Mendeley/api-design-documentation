@@ -1,5 +1,78 @@
+Table of Contents
+=================
+
+   * [API Design &amp; Best Practices](#api-design--best-practices)
+   * [Who should read this document?](#who-should-read-this-document)
+   * [Conventions used](#conventions-used)
+   * [General Advice](#general-advice)
+   * [Guiding principles](#guiding-principles)
+     * [Support a wide range of clients](#support-a-wide-range-of-clients)
+     * [Be consistent](#be-consistent)
+     * [Include all non-trivial business logic](#include-all-non-trivial-business-logic)
+     * [Follow standards pragmatically](#follow-standards-pragmatically)
+   * [REST](#rest)
+     * [What is REST?](#what-is-rest)
+     * [REST constraints](#rest-constraints)
+     * [Uniform Interface](#uniform-interface)
+     * [Addiontal notes on Uniform Interface](#addiontal-notes-on-uniform-interface)
+     * [What does this mean in practice?](#what-does-this-mean-in-practice)
+     * [Hypermedia](#hypermedia)
+   * [HTTP](#http)
+     * [Use the right spec](#use-the-right-spec)
+   * [URLs](#urls)
+     * [Basics](#basics)
+     * [Filter with query parameters](#filter-with-query-parameters)
+     * [Prefer flat to nested](#prefer-flat-to-nested)
+     * [If you have to nest](#if-you-have-to-nest)
+     * [Actions](#actions)
+     * [Looking up by a secondary ID](#looking-up-by-a-secondary-id)
+   * [HTTP Methods](#http-methods)
+     * [Safety and idempotency](#safety-and-idempotency)
+       * [Which one to use?](#which-one-to-use)
+     * [Special HTTP Methods](#special-http-methods)
+     * [Odd HTTP Methods](#odd-http-methods)
+     * [LINK / UNLINK](#link--unlink)
+     * [MISCELLANEOUSOTHERTHING](#miscellaneousotherthing)
+   * [CORS (cross-origin resource sharing)](#cors-cross-origin-resource-sharing)
+   * [Status codes (needs expansion)](#status-codes-needs-expansion)
+   * [Headers](#headers)
+     * [Media types](#media-types)
+     * [Links](#links)
+     * [Custom headers](#custom-headers)
+   * [Common patterns](#common-patterns)
+     * [Creating resources](#creating-resources)
+     * [Symmetry](#symmetry)
+     * [Views](#views)
+     * [Pagination](#pagination)
+     * [Bulk requests](#bulk-requests)
+     * [Synchronization](#synchronization)
+     * [Synchronization - alternative](#synchronization---alternative)
+   * [Validation errors](#validation-errors)
+   * [Compatibility and versioning](#compatibility-and-versioning)
+   * [The golden rule](#the-golden-rule)
+     * [What changes are OK?](#what-changes-are-ok)
+       * [Additonal notes](#additonal-notes)
+     * [What changes are bad?](#what-changes-are-bad)
+     * [How can I make breaking changes?](#how-can-i-make-breaking-changes)
+   * [Gnarly Bits](#gnarly-bits)
+     * [Trash](#trash)
+     * [Dates](#dates)
+     * [Side effects](#side-effects)
+   * [Client-specific behaviour](#client-specific-behaviour)
+       * [Additional notes](#additional-notes)
+       * [What to do about this?](#what-to-do-about-this)
+   * [Race Conditions](#race-conditions)
+     * [Concurrent updates](#concurrent-updates)
+     * [Preventing duplicate creates](#preventing-duplicate-creates)
+       * [Additional notes on preventing duplicate creates](#additional-notes-on-preventing-duplicate-creates)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
+
+
+
+
 API Design & Best Practices
-------------------------------------------------------------------===
+----------------------------------------------------
 
 This is a document providing suggestions, best practices and examples for writing APIs.
 
@@ -379,7 +452,7 @@ PATCH (but often idempotent in practice)
 
 Clients can use these facts to decide whether to retry a request.
 
-### Which one to use?
+#### Which one to use?
 
 -   Use `GET` for retrieving data.
 
@@ -402,8 +475,8 @@ We prefer `PATCH` to `PUT` for updates. **✔** We do this, we like it.
 
 ----------------------
 
-Specials
---------
+### Special HTTP Methods
+
 
 OPTIONS
 
@@ -419,8 +492,8 @@ Identical to `GET`, but returns only the headers, not the body.
 
 ----------------------
 
-Oddities
---------
+### Odd HTTP Methods
+
 
 CONNECT
 
@@ -506,8 +579,8 @@ Not going to go into lots of detail here - just mention a few patterns
 
 -   Will almost always be JSON. Only exception I’m aware of is BibTeX.
 
-Links
------
+### Links
+
 
 **✔** Use Link headers to indicate when one resource is linked to another.
 
@@ -518,8 +591,7 @@ Links
 
 ----------------------
 
-Custom headers
---------------
+### Custom headers
 
 **✔** Use standard headers wherever you can. Appendix B of the RESTful Web APIs book contains a handy list.
 
@@ -594,10 +666,9 @@ e.g. some cases where this doesn’t work
 
 ----------------------
 
-Views
------
+### Views
 
-### Problems
+**Problems**
 
 -   Some objects (e.g. documents) are very large
 
@@ -605,7 +676,7 @@ Views
 
 -   We don’t want to do expensive database queries for data that the client doesn’t need
 
-### Solution
+**Solution**
 
 **?** Offer a choice of views.
 
@@ -623,8 +694,8 @@ Some APIs (e.g. Facebook) go one step further and let you pick exactly which fi
 
 ----------------------
 
-Pagination
-----------
+### Pagination
+
 
 All APIs that return a collection must have an upper bound on the number of items in the response.
 
@@ -647,8 +718,7 @@ Confuses some third parties who don’t look at the docs
 
 ----------------------
 
-Bulk requests
--------------
+### Bulk requests
 
 **X** We occasionally get asked for an API like:
 
@@ -683,18 +753,18 @@ In this particular case we wrote a macro service to return followers and profile
 
 **✔** Always favour back end doing all the parallel work rather than the client.
 
-----------------------=====
+----------------------
 
-Synchronization
----------------
+### Synchronization
 
-### Problem
+
+**Problem**
 
 -   Syncing clients (e.g. desktop) want to have all of the user’s data cached locally.
 
 -   Inefficient to download everything on every sync for very large libraries.
 
-### Solution
+**Solution**
 
 -   Offer `modified_since` and `deleted_since` parameters on `GET` requests.
 
@@ -727,8 +797,7 @@ Synchronization
 
 =======
 
-Validation errors
------------------
+## Validation errors
 
 **X** We’ve been returning these as 400 Bad Request:
 
@@ -750,8 +819,7 @@ At the very least there should be enough information between the message and the
 Compatibility and versioning
 ----------------------------
 
-The golden rule
----------------
+## The golden rule
 
         Once we've released an API, we must NOT make breaking changes to it
 
@@ -828,8 +896,6 @@ Communication is key
 
 This approach might be suitable for things we’ve released externally and marked as beta - but still need to notify everyone (not just people who’ve hit it - we won’t build trust unless we’re seen to be following our own rules).
 
-### How can I make breaking changes?
-
 After we’ve publicly released an API:
 
 We haven’t done this yet. Some thoughts:
@@ -897,8 +963,7 @@ Try not to couple new stuff in so closely
 
 ------------------------------------------------------------------=
 
-Dates
------
+### Dates
 
 **✔** Use ISO 8601 format for dates and times: 2015-02-18T04:57:56Z
 
@@ -914,8 +979,7 @@ Could use [RFC 2822](https://tools.ietf.org/html/rfc2822) everywhere, but ugly a
 
 ------------------------------------------------------------------=
 
-Side effects
-------------
+### Side effects
 
 Beware of cases where `PATCH /resource1` can affect the state of `/resource2`.
 
