@@ -526,12 +526,15 @@ implementation.
 
  * Will almost always be JSON. Only exception I'm aware of is BibTeX.
 
- ## Links
+## Links
 
- **✔** Use Link headers to indicate when one resource is linked to another.
+**✔** Use Link headers to indicate when one resource is linked to another.
 
- **✔** Link headers are allowed (and useful) on requests as well as
- responses. For example:
+**✔** Link headers are allowed (and useful) on requests as well as
+responses. For example:
+
+	￼￼￼POST /files
+	Link: </documents/291d3064-4f74-4932-bfc8-4277d441705b>; rel="document";
 
 ========
 
@@ -1073,13 +1076,18 @@ Suppose a client doesn't get a response to a POST. Should it retry?
 
 
 
-#### Additional notes
-our clients just retry (should be fairly rare, worse case is a
+#### Additional notes on preventing duplicate creates
+* our clients just retry (should be fairly rare, worse case is a
 duplicate document created)
 
-only a draft (not an RFC), but not updated in 10 years
+* only a draft (not an RFC), but not updated in 10 years
 
-draft is slightly different (more about HTML forms) but idea is the same
+* draft is slightly different (more about HTML forms) but idea is the same
+
+
+
+
+
 
 
 
