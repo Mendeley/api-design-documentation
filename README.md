@@ -1,73 +1,5 @@
--   API Design & Best Practices
-    -   Who should read this document?
-    -   Conventions used
-    -   General Advice
-    -   Guiding principles
-        -   Support a wide range of clients
-        -   Be consistent
-        -   Include all non-trivial business logic
-        -   Follow standards pragmatically
-    -   REST
-        -   What is REST?
-        -   REST constraints
-        -   Uniform Interface
-        -   Addiontal notes on Uniform Interface
-        -   What does this mean in practice?
-        -   Hypermedia
-    -   HTTP
-        -   Use the right spec
-    -   URLs
-        -   Basics
-        -   Filter with query parameters
-        -   Prefer flat to nested
-        -   If you have to nest
-        -   Actions
-        -   Looking up by a secondary ID
-    -   HTTP Methods
-        -   Safety and idempotency
-        -   Which one to use?
-    -   Specials
-    -   Oddities
-        -   LINK / UNLINK
-        -   MISCELLANEOUSOTHERTHING
-    -   CORS (cross-origin resource sharing)
-    -   Status codes (needs expansion)
-    -   Headers
-        -   Media types
-    -   Links
-    -   Custom headers
-    -   Common patterns
-        -   Creating resources
-        -   Symmetry
-    -   Views
-        -   Problems
-        -   Solution
-    -   Pagination
-    -   Bulk requests
-    -   Synchronization
-        -   Problem
-        -   Solution
-        -   Synchronization - alternative
-    -   Validation errors
-    -   Compatibility and versioning
-    -   The golden rule
-        -   What changes are OK?
-        -   What changes are bad?
-        -   How can I make breaking changes?
-        -   How can I make breaking changes?
-    -   Gnarly Bits
-        -   Trash
-    -   Dates
-    -   Side effects
-    -   Client-specific behaviour
-        -   Additional notes
-        -   What to do about this?
-    -   Race Conditions
-        -   Concurrent updates
-        -   Preventing duplicate creates
-
 API Design & Best Practices
-===========================
+------------------------------------------------------------------===
 
 This is a document providing suggestions, best practices and examples for writing APIs.
 
@@ -77,18 +9,19 @@ Why?
 
 To avoid [bikeshedding](https://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality) arguments and to aid a positive developer experience (DX).
 
-======== \#\# Current Maintainer Joyce Stack
+\#\# Current Maintainer 
+
+Joyce Stack
 
 Original documented drafted and attributed to Matt Thomson.
 
-========
+----------------------
 
 Who should read this document?
 ------------------------------
 
 This document is intended for any developer who is writing an API.
 
-========
 
 Conventions used
 ----------------
@@ -101,7 +34,7 @@ Conventions used
 
 **?** This is something that we haven’t done that’s worth at least thinking about. It may still be a terrible idea.
 
-========
+----------------------
 
 General Advice
 --------------
@@ -121,7 +54,7 @@ General Advice
     -   We can move very quickly, but clients can’t always
     -   Some decisions are hard to change
 
-========
+----------------------
 
 Guiding principles
 ------------------
@@ -173,7 +106,7 @@ Guiding principles
 
 **More important to have a working API with actual clients, than achieve perfect RESTful purity**
 
-========
+----------------------
 
 REST
 ----
@@ -248,7 +181,7 @@ API design strategy for connecting resources within APIs.
     -   if you want to build a useful client, instead of hard-coding URLs, you end up hard-coding which links to follow
     -   it is becoming more popular with more success stories in the wild such as the [Guardian](http://www.programmableweb.com/news/how-guardian-approaching-hypermedia-based-api-infrastructure/2015/04/27)
 
-========
+----------------------
 
 HTTP
 ----
@@ -274,7 +207,7 @@ Reworked into these six RFCs:
 -   [RFC7235](https://tools.ietf.org/html/rfc7235) - HTTP/1.1: Authentication
     -   a framework for HTTP authentication
 
-========
+----------------------
 
 URLs
 ----
@@ -399,7 +332,7 @@ As an emergency manoeuvre, use a POST with a verb in the URL.
 
     -   Jersey does support it (@MatrixParam), but most other frameworks don’t
 
-========
+----------------------
 
 HTTP Methods
 ------------
@@ -416,7 +349,7 @@ HTTP Methods
 
 \*\* PATCH wasn’t in the original specification, but we use it.\*\*
 
-========
+----------------------
 
 ### Safety and idempotency
 
@@ -467,7 +400,7 @@ We prefer `PATCH` to `PUT` for updates. **✔** We do this, we like it.
 
 -   In reality, the client doesn’t replace the whole resource anyway (e.g. last modified time).
 
-========
+----------------------
 
 Specials
 --------
@@ -484,7 +417,7 @@ Identical to `GET`, but returns only the headers, not the body.
 
 **?** Clients could use this to `GET` pagination counts, but we haven’t implemented that.
 
-========
+----------------------
 
 Oddities
 --------
@@ -511,7 +444,7 @@ e.g. adding/removing documents from folders.
 
 **X** You can make up your own methods, but please don’t.
 
-========
+----------------------
 
 CORS (cross-origin resource sharing)
 ------------------------------------
@@ -536,7 +469,7 @@ CORS (cross-origin resource sharing)
 
 -   Some APIs make you opt in to CORS, or specify the domain you want to use - we weren’t aware of any reason to restrict it.
 
-========
+----------------------
 
 Status codes (needs expansion)
 ------------------------------
@@ -547,7 +480,7 @@ Status codes (needs expansion)
 
 -   Beyond that, use the most appropriate code. Not going to give a list here (many in RFC 7231, many spread around other specs Wikipedia has a good list, as does appendix A of the book), but they all have very specific meanings, so read them and pick the most appropriate one.
 
-========
+----------------------
 
 Headers
 -------
@@ -583,7 +516,7 @@ Links
     ￼￼￼POST /files
     Link: </documents/291d3064-4f74-4932-bfc8-4277d441705b>; rel="document";
 
-========
+----------------------
 
 Custom headers
 --------------
@@ -608,7 +541,7 @@ If you still want to introduce a custom header:
 
 \*\* Headers starting with “X-” used to be a best practice, but now considered deprecated - [RFC 6648](https://tools.ietf.org/html/rfc6648)\*\*
 
-========
+----------------------
 
 Common patterns
 ---------------
@@ -635,7 +568,7 @@ This means that all clients have to download the (potentially very large) repres
 
 We didn’t know about *Prefer* header at the time - wish we had. Gives clients a way to indicate whether they want to get a full representation or not.
 
-========
+----------------------
 
 ### Symmetry
 
@@ -659,7 +592,7 @@ e.g. some cases where this doesn’t work
 -   GET /files/(id): body is the file bytes
 -   extra metadata (e.g. the document that the file is attached to) goes in the headers as it’s the only place left
 
-========
+----------------------
 
 Views
 -----
@@ -688,7 +621,7 @@ Views
 
 Some APIs (e.g. Facebook) go one step further and let you pick exactly which fields you want
 
-========
+----------------------
 
 Pagination
 ----------
@@ -712,7 +645,7 @@ Works well with many HTTP clients (Jersey, Requests)
 
 Confuses some third parties who don’t look at the docs
 
-========
+----------------------
 
 Bulk requests
 -------------
@@ -750,7 +683,7 @@ In this particular case we wrote a macro service to return followers and profile
 
 **✔** Always favour back end doing all the parallel work rather than the client.
 
-=============
+----------------------=====
 
 Synchronization
 ---------------
@@ -919,7 +852,7 @@ Don’t change URLs - the resources themselves haven’t changed, just their rep
 
 **Communication, communication, communication**
 
-========
+----------------------
 
 Gnarly Bits
 -----------
@@ -962,7 +895,7 @@ Something to watch when changing things (changes can be wide-reaching)
 
 Try not to couple new stuff in so closely
 
-=========================
+------------------------------------------------------------------=
 
 Dates
 -----
@@ -979,7 +912,7 @@ Annoying but not too hard - most languages can convert dates in one or two lines
 
 Could use [RFC 2822](https://tools.ietf.org/html/rfc2822) everywhere, but ugly and locale-specific
 
-=========================
+------------------------------------------------------------------=
 
 Side effects
 ------------
@@ -990,7 +923,7 @@ Try to decouple into two operations, so that the client has to be explicit about
 
 **✔** We don’t have a good answer for this.
 
-=========================
+------------------------------------------------------------------=
 
 Client-specific behaviour
 -------------------------
@@ -1039,7 +972,7 @@ What if we had to change the desktop client ID? How many code changes would we h
 -   the service should never be used/exposed to external clients
 -   we don’t like this at the moment as its difficult to know which services exactly have restricted access
 
-=========================
+------------------------------------------------------------------=
 
 Race Conditions
 ---------------
