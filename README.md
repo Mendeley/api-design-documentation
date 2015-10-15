@@ -1112,7 +1112,7 @@ In this area you will find a bunch of items that we have in our beta APIs
 
 * Macro services 
 	* 	transactions in services if very hard - difficult to define service boundaries 
-	* 	feels like a  code smell - possible alternative is to not reuse services and treat them as a seperate service that does X business function e.g. calculate-pi-service, followers should return all profile information 
+	* 	feels like a  code smell - eg. followers should return all profile information and not just the ids
 	*  required query parameters on large collections - should have the query parameter in the URL with an ID but that doesn't feel right also
 * Handling multiple domains e.g submissions and datasets when sharing a single swagger instance 
 * Given we are using domains details in the URLs /submissions/attachments etc the /metadata/doi feels wrong 
