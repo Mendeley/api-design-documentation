@@ -65,6 +65,7 @@ Table of Contents
      * [Concurrent updates](#concurrent-updates)
      * [Preventing duplicate creates](#preventing-duplicate-creates)
        * [Additional notes on preventing duplicate creates](#additional-notes-on-preventing-duplicate-creates)
+   * [Roadtesting](#roadtesting)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
@@ -1103,3 +1104,18 @@ Suppose a client doesn’t get a response to a POST. Should it retry?
 -   only a draft (not an RFC), but not updated in 10 years
 
 -   draft is slightly different (more about HTML forms) but idea is the same
+
+
+
+## Roadtesting 
+In this area you will find a bunch of items that we have in our beta APIs 
+
+* Macro services 
+	* 	transactions in services if very hard - difficult to define service boundaries 
+	* 	feels like a  code smell - possible alternative is to not reuse services and treat them as a seperate service that does X business function e.g. calculate-pi-service, followers should return all profile information 
+	*  required query parameters on large collections - should have the query parameter in the URL with an ID but that doesn't feel right also
+* Handling multiple domains e.g submissions and datasets when sharing a single swagger instance 
+* Given we are using domains details in the URLs /submissions/attachments etc the /metadata/doi feels wrong 
+* How to write 'importing' APIs without leaking the underlying functionality into the endpoints? 
+
+
