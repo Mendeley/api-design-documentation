@@ -1,74 +1,71 @@
 Table of Contents
 =================
-
-   * [Table of Contents](#table-of-contents)
-   * [API Design &amp; Best Practices](#api-design--best-practices)
-   * [Who should read this document?](#who-should-read-this-document)
-   * [Conventions used](#conventions-used)
-   * [General Advice](#general-advice)
-   * [Guiding principles](#guiding-principles)
-     * [Support a wide range of clients](#support-a-wide-range-of-clients)
-     * [Be consistent](#be-consistent)
-     * [Include all non-trivial business logic](#include-all-non-trivial-business-logic)
-     * [Follow standards pragmatically](#follow-standards-pragmatically)
-   * [REST](#rest)
-     * [What is REST?](#what-is-rest)
-     * [REST constraints](#rest-constraints)
-     * [Uniform Interface](#uniform-interface)
-     * [Addiontal notes on Uniform Interface](#addiontal-notes-on-uniform-interface)
-     * [What does this mean in practice?](#what-does-this-mean-in-practice)
-     * [Hypermedia](#hypermedia)
-   * [HTTP](#http)
-     * [Use the right spec](#use-the-right-spec)
-   * [URIs](#uris)
-     * [Basics](#basics)
-     * [Prefer flat to nested](#prefer-flat-to-nested)
-     * [If you have to nest](#if-you-have-to-nest)
-     * [Looking up by a secondary ID](#looking-up-by-a-secondary-id)
-   * [HTTP Methods](#http-methods)
-     * [Safety and idempotency](#safety-and-idempotency)
-       * [Which one to use?](#which-one-to-use)
-     * [Special HTTP Methods](#special-http-methods)
-     * [Odd HTTP Methods](#odd-http-methods)
-     * [LINK / UNLINK](#link--unlink)
-     * [MISCELLANEOUSOTHERTHING](#miscellaneousotherthing)
-   * [CORS (cross-origin resource sharing)](#cors-cross-origin-resource-sharing)
-   * [Status codes (needs expansion)](#status-codes-needs-expansion)
-   * [Headers](#headers)
-     * [Media types](#media-types)
-     * [Links](#links)
-     * [Custom headers](#custom-headers)
-   * [Retrieving Data](#retrieving-data-)
-     * [Filtering](#filtering)
-     * [Views](#views)
-     * [Sorting](#sorting)
-     * [Pagination](#pagination)
-     * [Bulk requests](#bulk-requests)
-     * [Complex Operations (Actions)](#complex-operations-actions)
-   * [Creating resources](#creating-resources)
-     * [Symmetry](#symmetry)
-   * [Common patterns](#common-patterns)
-     * [Synchronization](#synchronization)
-     * [Synchronization - alternative](#synchronization---alternative)
-   * [Validation errors](#validation-errors)
-   * [Compatibility and versioning](#compatibility-and-versioning)
-   * [The golden rule](#the-golden-rule)
-     * [What changes are OK?](#what-changes-are-ok)
-       * [Additonal notes](#additonal-notes)
-     * [What changes are bad?](#what-changes-are-bad)
-     * [How can I make breaking changes?](#how-can-i-make-breaking-changes)
-   * [Gnarly Bits](#gnarly-bits)
-     * [Trash](#trash)
-     * [Dates](#dates)
-     * [Side effects](#side-effects)
-   * [Client-specific behaviour](#client-specific-behaviour)
-       * [Additional notes](#additional-notes)
-       * [What to do about this?](#what-to-do-about-this)
-   * [Race Conditions](#race-conditions)
-     * [Concurrent updates](#concurrent-updates)
-     * [Preventing duplicate creates](#preventing-duplicate-creates)
-       * [Additional notes on preventing duplicate creates](#additional-notes-on-preventing-duplicate-creates)
-   * [Roadtesting](#roadtesting)
+* [API Design &amp; Best Practices](#api-design--best-practices)
+    * [Who should read this document?](#who-should-read-this-document)
+    * [Conventions used](#conventions-used)
+    * [General Advice](#general-advice)
+    * [Guiding principles](#guiding-principles)
+      * [Support a wide range of clients](#support-a-wide-range-of-clients)
+      * [Be consistent](#be-consistent)
+      * [Include all non-trivial business logic](#include-all-non-trivial-business-logic)
+      * [Follow standards pragmatically](#follow-standards-pragmatically)
+      * [Use the right spec](#use-the-right-spec)
+    * [REST](#rest)
+      * [What is REST?](#what-is-rest)
+      * [REST constraints](#rest-constraints)
+      * [Uniform Interface](#uniform-interface)
+      * [Addiontal notes on Uniform Interface](#addiontal-notes-on-uniform-interface)
+      * [What does this mean in practice?](#what-does-this-mean-in-practice)
+      * [Hypermedia](#hypermedia)
+    * [HTTP](#http)
+    * [URIs](#uris)
+      * [Basics](#basics)
+      * [Prefer flat to nested](#prefer-flat-to-nested)
+      * [If you have to nest](#if-you-have-to-nest)
+      * [Looking up by a secondary ID](#looking-up-by-a-secondary-id)
+    * [HTTP Methods](#http-methods)
+      * [Safety and idempotency](#safety-and-idempotency)
+        * [Which one to use?](#which-one-to-use)
+      * [HTTP Cheat Sheet](#http-cheat-sheet)
+      * [LINK / UNLINK](#link--unlink)
+      * [MISCELLANEOUSOTHERTHING](#miscellaneousotherthing)
+    * [CORS (cross-origin resource sharing)](#cors-cross-origin-resource-sharing)
+    * [Status codes (needs expansion)](#status-codes-needs-expansion)
+    * [Headers](#headers)
+      * [Media types](#media-types)
+      * [Links](#links)
+      * [Custom headers](#custom-headers)
+    * [Retrieving Data](#retrieving-data-)
+      * [Filtering](#filtering)
+      * [Views](#views)
+      * [Sorting](#sorting)
+      * [Pagination](#pagination)
+      * [Bulk requests](#bulk-requests)
+      * [Complex Operations (Actions)](#complex-operations-actions)
+    * [Creating resources](#creating-resources)
+      * [Symmetry](#symmetry)
+    * [Common patterns](#common-patterns)
+      * [Synchronization](#synchronization)
+      * [Synchronization - alternative](#synchronization---alternative)
+    * [Validation errors](#validation-errors)
+    * [Compatibility and versioning](#compatibility-and-versioning)
+    * [The golden rule](#the-golden-rule)
+      * [What changes are OK?](#what-changes-are-ok)
+        * [Additonal notes](#additonal-notes)
+      * [What changes are bad?](#what-changes-are-bad)
+      * [How can I make breaking changes?](#how-can-i-make-breaking-changes)
+    * [Gnarly Bits](#gnarly-bits)
+      * [Trash](#trash)
+      * [Dates](#dates)
+      * [Side effects](#side-effects)
+    * [Client-specific behaviour](#client-specific-behaviour)
+        * [Additional notes](#additional-notes)
+        * [What to do about this?](#what-to-do-about-this)
+    * [Race Conditions](#race-conditions)
+      * [Concurrent updates](#concurrent-updates)
+      * [Preventing duplicate creates](#preventing-duplicate-creates)
+        * [Additional notes on preventing duplicate creates](#additional-notes-on-preventing-duplicate-creates)
+    * [Roadtesting](#roadtesting)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
@@ -285,6 +282,9 @@ API design strategy for connecting resources within APIs.
 
 ----------------------
 
+HTTP
+----
+
 
 URIs
 ----
@@ -435,35 +435,18 @@ We prefer `PATCH` to `PUT` for updates. **✔** We do this, we like it.
 
 ----------------------
 
-### Special HTTP Methods
+
+### HTTP Cheat Sheet
+|  	| GET 	| POST 	| PUT 	| DELETE 	| PATCH  | OPTIONS | HEAD | CONNECT | TRACE 
+|	|	|	|	|	|
+| How does the HTTP spec define it? 	| The GET method requests transfer of a current selected representation for the target resource. 	| The POST method requests that the target resource process the representation enclosed in the request according to the resource's own specific semantics. 	| The PUT method requests that the state of the target resource be created or replaced with the state defined by the representation enclosed in the request message payload. 	| The DELETE method requests that the origin server remove the association between the target resource and its current functionality. 	| The PATCH method requests that a set of changes described in the request entity be applied to the resource identified by the Request-URI. (RFC 5789) 	| The OPTIONS method requests information about the communication options available for the target resource, at either the origin server or an intervening intermediary. 	| The HEAD method is identical to GET except that the server MUST NOT send a message body in the response (i.e., the response terminates at the end of the header section). 	| The CONNECT method requests that the recipient establish a tunnel to the destination origin server identified by the request-target and, if successful, thereafter restrict its behavior to blind forwarding of packets, in both directions, until the tunnel is closed. 	| The TRACE method requests a remote, application-level loop-back of the request message. 	|
+| Is it safe? (no side effects) 	| Yes 	| No 	| No 	| No 	| No 	| Yes 	| Yes 	| No 	| Yes 	|
+| Is it idempotent? (repeating the request may give a different response, but makes no material difference to the resource) 	| Yes 	| No 	| Yes 	| Yes 	| No 	| Yes 	| YEs 	| No 	| Yes 	|
+| Are responses cacheable? 	| Yes 	| Only when explicitly marked as such 	| No 	| No 	| Only when explicitly marked as such 	| No 	| Yes 	| No 	| No 	|
+| Can requests include a body? 	| No 	| Yes 	| Yes 	| No 	| Yes 	| Yes (but no defined uses for this) 	| No 	| No 	| No 	|
+| What could it be used for in a RESTful API? 	| Fetching a representation of the resource 	| Creating a new resource from a representation 	| Replacing a resource with a representation 	| Deleting a resource 	| Applying partial updates to a resource 	| CORS  	| Fetching only the headers (e.g. pagination counts) 	| Nothing - breaks layered system constraint 	| Nothing - breaks layered system constraint                                                                       
 
 
-OPTIONS
-
-Returns details about what requests will be accepted for a URL.
-
-**✔** Used for CORS (more later).
-
-HEAD
-
-Identical to `GET`, but returns only the headers, not the body.
-
-**?** Clients could use this to `GET` pagination counts, but we haven’t implemented that.
-
-----------------------
-
-### Odd HTTP Methods
-
-
-CONNECT
-
-**X** Converts the connection to a transparent TCP/IP tunnel.
-
-TRACE
-
-Echoes the request back, so that the client can see what intermediate servers have done.
-
-**X** Breaks layered system constraint.
 
 ### LINK / UNLINK
 
@@ -735,6 +718,8 @@ As an emergency manoeuvre, use a POST with a verb in the URL.
 -   this should be a last resort - prefer to PATCH the resource if you can.
 -   however tempting it may be, don’t invent your own HTTP method - some clients won’t be able to handle this
 
+
+---------
 
 Creating resources
 ---------------
