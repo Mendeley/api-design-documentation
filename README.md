@@ -87,6 +87,11 @@ Current Maintainer is Joyce Stack
 
 Original documented drafted and attributed to Matt Thomson in 2014. 
 
+This document used these other references:
+
+* [JSON API](http://jsonapi.org/format/) 
+* [Pay Pal])(https://github.com/paypal/api-standards)
+
 ----------------------
 
 Who should read this document?
@@ -231,7 +236,7 @@ REST
 
 -   Interfaces need to be clearly defined, to allow clients and servers to evolve independently
 
--   URLs need to be chosen carefully
+-   URIs need to be chosen carefully
 
 -   Use appropriate HTTP methods to manipulate state
 
@@ -254,6 +259,7 @@ API design strategy for connecting resources within APIs.
     -   it is becoming more popular with more success stories in the wild such as the [Guardian](http://www.programmableweb.com/news/how-guardian-approaching-hypermedia-based-api-infrastructure/2015/04/27)
 
 ----------------------
+
 
 HTTP
 ----
@@ -281,12 +287,13 @@ Reworked into these six RFCs:
 
 ----------------------
 
-URLs
+
+URIs
 ----
 
 ### Basics
 
-URLs are based around plural nouns.
+URIs are based around plural nouns.
 
     * /things - identifies a collection of resources.
     * /things/(uuid) - identifies a single resource within a collection.
@@ -295,31 +302,6 @@ Should only need one UUID per URL - “universally unique”
 
 UUIDs rather than MySQL keys - don’t couple the API to our database
 
-### Filter with query parameters
-
-**✔** We do this, we like it.
-
-     /documents?starred=true
-
-     /files?document_id=b91d9530-9017-4b96-b000-cdc245920355
-
-We **don’t** like
-
-    /documents/b91d9530-9017-4b96-b000-cdc245920355/files/
-
--   reduces surface of the API
--   makes it possible to get all files without having to traverse documents (better for syncing clients)
-
-**?** We are doing this, it maybe a terrible idea
-
-    /locations?prefix=XXX
-
-    /institutions?REQUIRED_FILTER
-
-    /catalog?REQUIRED_FILTER
-
--   in some cases we have required query parameters e.g. prefix in locations and doi, pmid etc in catalog
--   we do this because returning the collection of resources would be too big for most clients e.g. the catalog
 
 ### Prefer flat to nested
 
@@ -353,31 +335,8 @@ We **don’t** like
     -   Second URL - IDs are document, filehash, group
     -   Not clear what that last ID is
     -   The resource in question is a file - why can’t it have an ID and be identified by just that?
-
-### Actions
-
-Some actions don’t naturally fit a RESTful model.
-
-As an emergency manoeuvre, use a POST with a verb in the URL.
-
-**!** We do this, but I wish we didn’t
-
-    POST /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313/restore
-
--   this is the only time you’re allowed to put a verb in the URL
--   prefer “/actions” - if you have multiple then “restore” is like an ID, so should have something in the middle
-
-**?** This is something that we haven’t done that’s worth at least thinking about. It may still be a terrible idea.
-
-    POST /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313/actions/restore
-
-**X** We don’t do this, but that’s fine because we don’t like it anyway
-
-    RESTORE /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313
-
--   this should be a last resort - prefer to PATCH the resource if you can.
--   however tempting it may be, don’t invent your own HTTP method - some clients won’t be able to handle this
-
+    
+    
 ### Looking up by a secondary ID
 
 **!** We do this, but I wish we didn’t
@@ -402,7 +361,10 @@ As an emergency manoeuvre, use a POST with a verb in the URL.
 
 -   Not widely implemented
 
-    -   Jersey does support it (@MatrixParam), but most other frameworks don’t
+    -   Jersey does support it (@MatrixParam), but most other frameworks don’t    
+
+
+
 
 ----------------------
 
@@ -422,6 +384,7 @@ HTTP Methods
 \*\* PATCH wasn’t in the original specification, but we use it.\*\*
 
 ----------------------
+
 
 ### Safety and idempotency
 
@@ -614,56 +577,38 @@ If you still want to introduce a custom header:
 
 ----------------------
 
-Common patterns
----------------
 
-### Creating resources
+Retrieving Data 
+----
 
-**✔** The response to a POST should be `201 Created`, with a `Location header` containing the URL where the resource can be found.
+### Filtering
 
-**!** The body should contain a representation of the resources (including any server-generated fields).
+Use query parameters to filter on collection resources. 
 
-    POST /things
-    {"field": "value"}
+**✔** We do this, we like it.
 
-    201 Created
-    Location: https://api.mendeley.com/things/291d3064-4f74-4932-bfc8-4277d441705b
-    {"field": "value", "created": "2015-02-18T04:57:56Z"}
+     /documents?starred=true
 
-This means that all clients have to download the (potentially very large) representation, even if they don’t care about the server-generated fields.
+     /files?document_id=b91d9530-9017-4b96-b000-cdc245920355
 
-**?** Use the **[HTTP Prefer](http://tools.ietf.org/html/rfc7240) header**:
+We **don’t** like
 
-         Prefer: return=minimal
-         Prefer: return=representation
+    /documents/b91d9530-9017-4b96-b000-cdc245920355/files/
 
-We didn’t know about *Prefer* header at the time - wish we had. Gives clients a way to indicate whether they want to get a full representation or not.
+-   reduces surface of the API
+-   makes it possible to get all files without having to traverse documents (better for syncing clients)
 
-----------------------
+**?** We are doing this, it maybe a terrible idea
 
-### Symmetry
+    /locations?prefix=XXX
 
-The body of a `POST` request, and the body returned on a GET request to the URL from the `Location` header, should have the same structure.
+    /institutions?REQUIRED_FILTER
 
-            POST /things {"field": "value"} 
-            
-            201 Created
-            Location: https://api.mendeley.com/things/291d3064-4f74-4932-bfc8-4277d441705b
+    /catalog?REQUIRED_FILTER
 
-            GET /things/291d3064-4f74-4932-bfc8-4277d441705b 
-            
-            200 OK
-            {"field": "value", "created": "2015-02-18T04:57:56Z"}
+-   in some cases we have required query parameters e.g. prefix in locations and doi, pmid etc in catalog
+-   we do this because returning the collection of resources would be too big for most clients e.g. you could not return the entire catalog - see [Views](#views)
 
-GET response can have more fields, but that’s OK - same structure is the important thing.
-
-e.g. some cases where this doesn’t work
-
--   POST /files: body is the file bytes
--   GET /files/(id): body is the file bytes
--   extra metadata (e.g. the document that the file is attached to) goes in the headers as it’s the only place left
-
-----------------------
 
 ### Views
 
@@ -691,9 +636,26 @@ e.g. some cases where this doesn’t work
 
 Some APIs (e.g. Facebook) go one step further and let you pick exactly which fields you want
 
-----------------------
 
-### Pagination
+
+### Sorting 
+An endpoint maybe required to sort it's collection based on some criteria e.g. created. 
+
+
+**✔** We do this, we like it.
+
+     /documents?sort=created
+
+You can specify the order of the sort by using the 'order' query parameter
+
+**✔** We do this, we like it.
+
+     /documents?sort=created&order=asc
+ 
+
+**?** Would have preferred to use `sort_order' and `sort_by`. 
+
+### Pagination 
 
 
 All APIs that return a collection must have an upper bound on the number of items in the response.
@@ -715,7 +677,6 @@ Works well with many HTTP clients (Jersey, Requests)
 
 Confuses some third parties who don’t look at the docs
 
-----------------------
 
 ### Bulk requests
 
@@ -752,7 +713,80 @@ In this particular case we wrote a macro service to return followers and profile
 
 **✔** Always favour back end doing all the parallel work rather than the client.
 
+### Complex Operations (Actions) 
+
+Some actions don’t naturally fit a RESTful model. Verbs such as 'import', 'activate', 'cancel', 'validate', 'accept', 'verify', and 'deny' are usual suspects.
+
+As an emergency manoeuvre, use a POST with a verb in the URL. 
+
+**!** We do this, but I wish we didn’t
+
+    POST /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313/restore
+
+-   this is the only time you’re allowed to put a verb in the URL
+-   prefer “/actions” - if you have multiple then “restore” is like an ID, so should have something in the middle
+
+**?** This is something that we haven’t done that’s worth at least thinking about. It may still be a terrible idea.
+
+    POST /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313/actions/restore
+
+**X** We don’t do this, but that’s fine because we don’t like it anyway
+
+    RESTORE /trash/8d7a4bd2-918a-4a8c-8529-4ca437b91313
+
+-   this should be a last resort - prefer to PATCH the resource if you can.
+-   however tempting it may be, don’t invent your own HTTP method - some clients won’t be able to handle this
+
+
+Creating resources
+---------------
+**✔** The response to a POST should be `201 Created`, with a `Location header` containing the URL where the resource can be found.
+
+**!** The body should contain a representation of the resources (including any server-generated fields).
+
+    POST /things
+    {"field": "value"}
+
+    201 Created
+    Location: https://api.mendeley.com/things/291d3064-4f74-4932-bfc8-4277d441705b
+    {"field": "value", "created": "2015-02-18T04:57:56Z"}
+
+This means that all clients have to download the (potentially very large) representation, even if they don’t care about the server-generated fields.
+
+**?** Use the **[HTTP Prefer](http://tools.ietf.org/html/rfc7240) header**:
+
+         Prefer: return=minimal
+         Prefer: return=representation
+
+We didn’t know about *Prefer* header at the time - wish we had. Gives clients a way to indicate whether they want to get a full representation or not.
+
+
+### Symmetry
+
+The body of a `POST` request, and the body returned on a GET request to the URL from the `Location` header, should have the same structure.
+
+            POST /things {"field": "value"} 
+            
+            201 Created
+            Location: https://api.mendeley.com/things/291d3064-4f74-4932-bfc8-4277d441705b
+
+            GET /things/291d3064-4f74-4932-bfc8-4277d441705b 
+            
+            200 OK
+            {"field": "value", "created": "2015-02-18T04:57:56Z"}
+
+GET response can have more fields, but that’s OK - same structure is the important thing.
+
+e.g. some cases where this doesn’t work
+
+-   POST /files: body is the file bytes
+-   GET /files/(id): body is the file bytes
+-   extra metadata (e.g. the document that the file is attached to) goes in the headers as it’s the only place left
+
 ----------------------
+
+Common patterns
+---------------
 
 ### Synchronization
 
