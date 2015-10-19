@@ -1,6 +1,7 @@
 Table of Contents
 =================
 
+   * [Table of Contents](#table-of-contents)
    * [API Design &amp; Best Practices](#api-design--best-practices)
    * [Who should read this document?](#who-should-read-this-document)
    * [Conventions used](#conventions-used)
@@ -19,12 +20,10 @@ Table of Contents
      * [Hypermedia](#hypermedia)
    * [HTTP](#http)
      * [Use the right spec](#use-the-right-spec)
-   * [URLs](#urls)
+   * [URIs](#uris)
      * [Basics](#basics)
-     * [Filter with query parameters](#filter-with-query-parameters)
      * [Prefer flat to nested](#prefer-flat-to-nested)
      * [If you have to nest](#if-you-have-to-nest)
-     * [Actions](#actions)
      * [Looking up by a secondary ID](#looking-up-by-a-secondary-id)
    * [HTTP Methods](#http-methods)
      * [Safety and idempotency](#safety-and-idempotency)
@@ -39,12 +38,16 @@ Table of Contents
      * [Media types](#media-types)
      * [Links](#links)
      * [Custom headers](#custom-headers)
-   * [Common patterns](#common-patterns)
-     * [Creating resources](#creating-resources)
-     * [Symmetry](#symmetry)
+   * [Retrieving Data](#retrieving-data-)
+     * [Filtering](#filtering)
      * [Views](#views)
+     * [Sorting](#sorting)
      * [Pagination](#pagination)
      * [Bulk requests](#bulk-requests)
+     * [Complex Operations (Actions)](#complex-operations-actions)
+   * [Creating resources](#creating-resources)
+     * [Symmetry](#symmetry)
+   * [Common patterns](#common-patterns)
      * [Synchronization](#synchronization)
      * [Synchronization - alternative](#synchronization---alternative)
    * [Validation errors](#validation-errors)
@@ -183,6 +186,28 @@ Guiding principles
 
 **More important to have a working API with actual clients, than achieve perfect RESTful purity**
 
+
+### Use the right spec
+
+**Don’t use RFC2616.** Delete it from your hard drives, bookmarks, and burn (or responsibly recycle) any copies that are printed out.
+
+RFC2616 was the reference for HTTP, but now it’s deprecated. You’ll still see it referred to in lots of places.
+
+Source: [mnot’s blog](https://www.mnot.net/blog/2014/06/07/rfc2616_is_dead)
+
+Reworked into these six RFCs:
+
+-   [RFC7230](https://tools.ietf.org/html/rfc7230) - HTTP/1.1: Message Syntax and Routing
+    -   low-level message parsing and connection management
+-   [RFC7231](https://tools.ietf.org/html/rfc7231) - HTTP/1.1: Semantics and Content
+    -   methods, status codes and headers
+-   [RFC7232](https://tools.ietf.org/html/rfc7232) - HTTP/1.1: Conditional Requests
+    -   e.g., If-Modified-Since RFC7233 - HTTP/1.1: Range Requests - getting partial content
+-   [RFC7234](https://tools.ietf.org/html/rfc7234) - HTTP/1.1: Caching
+    -   browser and intermediary caches
+-   [RFC7235](https://tools.ietf.org/html/rfc7235) - HTTP/1.1: Authentication
+    -   a framework for HTTP authentication
+
 ----------------------
 
 REST
@@ -257,33 +282,6 @@ API design strategy for connecting resources within APIs.
     -   navigating hypermedia is like browsing a website
     -   if you want to build a useful client, instead of hard-coding URLs, you end up hard-coding which links to follow
     -   it is becoming more popular with more success stories in the wild such as the [Guardian](http://www.programmableweb.com/news/how-guardian-approaching-hypermedia-based-api-infrastructure/2015/04/27)
-
-----------------------
-
-
-HTTP
-----
-
-### Use the right spec
-
-**Don’t use RFC2616.** Delete it from your hard drives, bookmarks, and burn (or responsibly recycle) any copies that are printed out.
-
-RFC2616 was the reference for HTTP, but now it’s deprecated. You’ll still see it referred to in lots of places.
-
-Source: [mnot’s blog](https://www.mnot.net/blog/2014/06/07/rfc2616_is_dead)
-
-Reworked into these six RFCs:
-
--   [RFC7230](https://tools.ietf.org/html/rfc7230) - HTTP/1.1: Message Syntax and Routing
-    -   low-level message parsing and connection management
--   [RFC7231](https://tools.ietf.org/html/rfc7231) - HTTP/1.1: Semantics and Content
-    -   methods, status codes and headers
--   [RFC7232](https://tools.ietf.org/html/rfc7232) - HTTP/1.1: Conditional Requests
-    -   e.g., If-Modified-Since RFC7233 - HTTP/1.1: Range Requests - getting partial content
--   [RFC7234](https://tools.ietf.org/html/rfc7234) - HTTP/1.1: Caching
-    -   browser and intermediary caches
--   [RFC7235](https://tools.ietf.org/html/rfc7235) - HTTP/1.1: Authentication
-    -   a framework for HTTP authentication
 
 ----------------------
 
