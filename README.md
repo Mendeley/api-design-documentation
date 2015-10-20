@@ -1,6 +1,7 @@
 Table of Contents
 =================
 * [API Design &amp; Best Practices](#api-design--best-practices)
+     * [API Design &amp; Best Practices](#api-design--best-practices)
     * [Who should read this document?](#who-should-read-this-document)
     * [Conventions used](#conventions-used)
     * [General Advice](#general-advice)
@@ -35,6 +36,7 @@ Table of Contents
       * [Media types](#media-types)
       * [Links](#links)
       * [Custom headers](#custom-headers)
+    * [Validation errors](#validation-errors)
     * [Retrieving Data](#retrieving-data-)
       * [Filtering](#filtering)
       * [Views](#views)
@@ -44,10 +46,8 @@ Table of Contents
       * [Complex Operations (Actions)](#complex-operations-actions)
     * [Creating resources](#creating-resources)
       * [Symmetry](#symmetry)
-    * [Common patterns](#common-patterns)
-      * [Synchronization](#synchronization)
+    * [Synchronization / Syncing clients](#synchronization--syncing-clients)
       * [Synchronization - alternative](#synchronization---alternative)
-    * [Validation errors](#validation-errors)
     * [Compatibility and versioning](#compatibility-and-versioning)
     * [The golden rule](#the-golden-rule)
       * [What changes are OK?](#what-changes-are-ok)
@@ -58,7 +58,7 @@ Table of Contents
       * [Trash](#trash)
       * [Dates](#dates)
       * [Side effects](#side-effects)
-    * [Client-specific behaviour](#client-specific-behaviour)
+      * [Client-specific behaviour](#client-specific-behaviour)
         * [Additional notes](#additional-notes)
         * [What to do about this?](#what-to-do-about-this)
     * [Race Conditions](#race-conditions)
@@ -559,6 +559,27 @@ If you still want to introduce a custom header:
 ----------------------
 
 
+## Validation errors
+
+**X** We’ve been returning these as 400 Bad Request:
+
+        400 Bad Request
+        {"message": "title may not be null"}
+
+**✔** Starting to use a more specific status code, and a more structured response:
+
+￼ 422 Unprocessable Entity \[{“field”: “title”, “message”: “may not be null”}\]
+
+Status provides context, body provides detail
+
+**?** Should errors be suitable for end-users?
+
+At the very least there should be enough information between the message and the status code to come up with a message.
+
+=======
+
+
+
 Retrieving Data 
 ----
 
@@ -768,10 +789,8 @@ e.g. some cases where this doesn’t work
 
 ----------------------
 
-Common patterns
+Synchronization / Syncing clients
 ---------------
-
-### Synchronization
 
 
 **Problem**
@@ -813,24 +832,6 @@ Common patterns
 
 =======
 
-## Validation errors
-
-**X** We’ve been returning these as 400 Bad Request:
-
-        400 Bad Request
-        {"message": "title may not be null"}
-
-**✔** Starting to use a more specific status code, and a more structured response:
-
-￼ 422 Unprocessable Entity \[{“field”: “title”, “message”: “may not be null”}\]
-
-Status provides context, body provides detail
-
-**?** Should errors be suitable for end-users?
-
-At the very least there should be enough information between the message and the status code to come up with a message.
-
-=======
 
 Compatibility and versioning
 ----------------------------
@@ -1005,8 +1006,7 @@ Try to decouple into two operations, so that the client has to be explicit about
 
 ------------------------------------------------------------------=
 
-Client-specific behaviour
--------------------------
+### Client-specific behaviour
 
 There are too many places in the API where different clients get different behaviour.
 
