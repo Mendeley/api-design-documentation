@@ -1,72 +1,72 @@
 Table of Contents
 =================
-* [API Design &amp; Best Practices](#api-design--best-practices)
-    * [API Design &amp; Best Practices](#api-design--best-practices)
-   * [Who should read this document?](#who-should-read-this-document)
-   * [Conventions used](#conventions-used)
-   * [General Advice](#general-advice)
-   * [Guiding principles](#guiding-principles)
-     * [Support a wide range of clients](#support-a-wide-range-of-clients)
-     * [Be consistent](#be-consistent)
-     * [Include all non-trivial business logic](#include-all-non-trivial-business-logic)
-     * [Follow standards pragmatically](#follow-standards-pragmatically)
-     * [Use the right spec](#use-the-right-spec)
-   * [REST](#rest)
-     * [What is REST?](#what-is-rest)
-     * [REST constraints](#rest-constraints)
-     * [Uniform Interface](#uniform-interface)
-     * [Addiontal notes on Uniform Interface](#addiontal-notes-on-uniform-interface)
-     * [What does this mean in practice?](#what-does-this-mean-in-practice)
-     * [Hypermedia](#hypermedia)
-   * [HTTP](#http)
-   * [URIs](#uris)
-     * [Basics](#basics)
-     * [Prefer flat to nested](#prefer-flat-to-nested)
-     * [If you have to nest](#if-you-have-to-nest)
-     * [Looking up by a secondary ID](#looking-up-by-a-secondary-id)
-   * [HTTP Methods](#http-methods)
-     * [Safety and idempotency](#safety-and-idempotency)
-       * [Which one to use?](#which-one-to-use)
-     * [HTTP Cheat Sheet](#http-cheat-sheet)
-     * [LINK / UNLINK](#link--unlink)
-     * [MISCELLANEOUSOTHERTHING](#miscellaneousotherthing)
-   * [CORS (cross-origin resource sharing)](#cors-cross-origin-resource-sharing)
-   * [Status codes (needs expansion)](#status-codes-needs-expansion)
-   * [Headers](#headers)
-     * [Media types](#media-types)
-     * [Links](#links)
-     * [Custom headers](#custom-headers)
-   * [Validation errors](#validation-errors)
-   * [Retrieving Data](#retrieving-data-)
-     * [Filtering](#filtering)
-     * [Views](#views)
-     * [Sorting](#sorting)
-     * [Pagination](#pagination)
-     * [Bulk requests](#bulk-requests)
-     * [Complex Operations (Actions)](#complex-operations-actions)
-   * [Creating resources](#creating-resources)
-     * [Symmetry](#symmetry)
-   * [Synchronization / Syncing clients](#synchronization--syncing-clients)
-     * [Synchronization - alternative](#synchronization---alternative)
-   * [Compatibility and versioning](#compatibility-and-versioning)
-   * [The golden rule](#the-golden-rule)
-     * [What changes are OK?](#what-changes-are-ok)
-       * [Additonal notes](#additonal-notes)
-     * [What changes are bad?](#what-changes-are-bad)
-     * [How can I make breaking changes?](#how-can-i-make-breaking-changes)
-   * [Gnarly Bits](#gnarly-bits)
-     * [Trash](#trash)
-     * [Dates](#dates)
-     * [Side effects](#side-effects)
-     * [Client-specific behaviour](#client-specific-behaviour)
-       * [Additional notes](#additional-notes)
-       * [What to do about this?](#what-to-do-about-this)
-   * [Race Conditions](#race-conditions)
-     * [Concurrent updates](#concurrent-updates)
-     * [Preventing duplicate creates](#preventing-duplicate-creates)
-       * [Additional notes on preventing duplicate creates](#additional-notes-on-preventing-duplicate-creates)
-   * [Roadtesting](#roadtesting)
-
+* [Table of Contents](#table-of-contents)
+  * [API Design &amp; Best Practices](#api-design--best-practices)
+  * [Who should read this document?](#who-should-read-this-document)
+  * [Conventions used](#conventions-used)
+  * [General Advice](#general-advice)
+  * [Guiding principles](#guiding-principles)
+    * [Support a wide range of clients](#support-a-wide-range-of-clients)
+    * [Be consistent](#be-consistent)
+    * [Types of consistency](#types-of-consistency)
+    * [Include all non-trivial business logic](#include-all-non-trivial-business-logic)
+    * [Follow standards pragmatically](#follow-standards-pragmatically)
+    * [Use the right spec](#use-the-right-spec)
+  * [Authentication](#authentication-)
+  * [REST](#rest)
+    * [What is REST?](#what-is-rest)
+    * [REST constraints](#rest-constraints)
+    * [Uniform Interface](#uniform-interface)
+    * [Addiontal notes on Uniform Interface](#addiontal-notes-on-uniform-interface)
+    * [What does this mean in practice?](#what-does-this-mean-in-practice)
+    * [Hypermedia](#hypermedia)
+  * [HTTP](#http)
+  * [URLs](#urls)
+    * [Basics](#basics)
+    * [Prefer flat to nested](#prefer-flat-to-nested)
+    * [If you have to nest](#if-you-have-to-nest)
+    * [Looking up by a secondary ID](#looking-up-by-a-secondary-id)
+  * [HTTP Methods](#http-methods)
+    * [Safety and idempotency](#safety-and-idempotency)
+      * [Which one to use?](#which-one-to-use)
+    * [HTTP Cheat Sheet](#http-cheat-sheet)
+    * [LINK / UNLINK](#link--unlink)
+  * [CORS (cross-origin resource sharing)](#cors-cross-origin-resource-sharing)
+  * [Status codes (needs expansion)](#status-codes-needs-expansion)
+  * [Headers](#headers)
+    * [Media types](#media-types)
+    * [Links](#links)
+    * [Custom headers](#custom-headers)
+  * [Validation errors - (needs expansion)](#validation-errors---needs-expansion)
+  * [Retrieving Data](#retrieving-data-)
+    * [Filtering](#filtering)
+    * [Views](#views)
+    * [Sorting](#sorting)
+    * [Pagination](#pagination)
+    * [Bulk requests](#bulk-requests)
+    * [Complex Operations (Actions)](#complex-operations-actions)
+  * [Creating resources](#creating-resources)
+    * [REST Symmetry](#rest-symmetry)
+  * [Synchronization / Syncing clients](#synchronization--syncing-clients)
+    * [Synchronization - alternative](#synchronization---alternative)
+  * [Compatibility and versioning](#compatibility-and-versioning)
+  * [The golden rule](#the-golden-rule)
+    * [What changes are OK?](#what-changes-are-ok)
+      * [Additonal notes](#additonal-notes)
+    * [What changes are bad?](#what-changes-are-bad)
+    * [How can I make breaking changes?](#how-can-i-make-breaking-changes)
+    * [What's wrong with API versions in URLS?](#whats-wrong-with-api-versions-in-urls)
+  * [Gnarly Bits](#gnarly-bits)
+    * [Trash](#trash)
+    * [Dates](#dates)
+    * [Side effects](#side-effects)
+    * [Client-specific behaviour](#client-specific-behaviour)
+      * [Additional notes](#additional-notes)
+      * [What to do about this?](#what-to-do-about-this)
+  * [Race Conditions](#race-conditions)
+    * [Concurrent updates](#concurrent-updates)
+    * [Preventing duplicate creates](#preventing-duplicate-creates)
+      * [Additional notes on preventing duplicate creates](#additional-notes-on-preventing-duplicate-creates)       
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 
@@ -81,23 +81,27 @@ This is to encourage consistency, maintainability, and best practices.
 
 Why?
 
-To avoid [bikeshedding](https://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality) arguments and to aid a positive developer experience (DX).
+So that all new APIs are fit for purpose, are consistent and maintainable. 
 
-Current Maintainer is Joyce Stack
+It also avoids [bikeshedding](https://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality) arguments and to aid a positive developer experience (DX).
+
+Current Maintainer is <joyce.stack@mendeley.com>
 
 Original documented drafted and attributed to Matt Thomson in 2014. 
 
 This document used these other references:
 
 * [JSON API](http://jsonapi.org/format/) 
-* [Pay Pal])(https://github.com/paypal/api-standards)
+* [Pay Pal](https://github.com/paypal/api-standards)
+* [WhiteHouse](https://github.com/WhiteHouse/api-standards)
+* [Stripe](https://stripe.com/docs/upgrades)
 
 ----------------------
 
 Who should read this document?
 ------------------------------
 
-This document is intended for any developer who is writing an API.
+This document is intended for any developer who is writing an API following REST principals and formatting data as JSON.
 
 
 Conventions used
@@ -116,17 +120,17 @@ Conventions used
 General Advice
 --------------
 
--   Read [this book](http://www.amazon.com/RESTful-Web-Services-Leonard-Richardson/dp/0596529260)
+-   **Read [this book](http://www.amazon.com/RESTful-Web-Services-Leonard-Richardson/dp/0596529260)**
     -   We might not follow all advice in this book, but it’s still worth a read.
--   Use other APIs for inspiration (but don’t copy blindly)
+-   **Use other APIs for inspiration (but don’t copy blindly)**
     -   Most of the problems we try to solve are not unique to us We like Twitter, Stripe, Twilio, …
     -   Just because someone else is doing it doesn’t mean it’s right, or even that the people who put it there are happy with it
     -   Right now someone in Twitter is giving a talk on things they wish they’d done differently in their API
--   A tidy API is more important than tidy code
+-   **A tidy API is more important than tidy code**
     -   Design the API that your clients want - there are more of them than us.
     -   Might make implementation more complicated but usually worth it
     -   Exception: database constraints (hard to change schemas on our big tables, had to make compromises)
--   Look before you leap
+-   **Look before you leap**
     -   APIs can be hard to change after they’re released
     -   We can move very quickly, but clients can’t always
     -   Some decisions are hard to change
@@ -143,10 +147,12 @@ Guiding principles
     -   Data centre with a fibre link
     -   Home internet connection
     -   Mobile network
+    
 -   Device - multiple devices: Differ vastly in power, battery.
     -   Servers
     -   PCs
     -   Mobile phones / tablets
+    
 -   Programming languages - languages: not all languages have the same support for concurrency/HTTP features
 
 -   Syncing vs non-syncing - getting lots of data vs on-demand
@@ -155,12 +161,29 @@ Guiding principles
 
 ### Be consistent
 
--   Should look like one API, not many.
--   Similar things should look similar, regardless of which service they’re in, or who worked on them.
--   Examples:
-    -   prefer snake\_case to camelCase or kebab-case
-    -   a person has a first\_name and a last\_name **(! - should think about this more - not all names follow this standard e.g. Chinese)**
-    -   when to use “link”, “website” and “url”
+- Looks like one API, not many e.g. we prefer snake_case over camelCase or kebab-case
+- No frivolous or unnecessary variations in it. 
+- Similar things should look similar, regardless of which service they’re in, or who worked on them - API behaviour consistency 	
+	
+**WHY?**	
+
+- it drives adoption because
+	- this allows developers to quickly become familiar with APIs because they are predicatable, easy to learn and to remember.  
+
+	- they are easy to integrate with 
+	
+	- they reduce testing efforts 
+
+   
+### Types of consistency 
+
+- Data content normalization - if one API uses “f” and another uses “female” and another uses “woman” when describing gender 
+	-  **WHY?** - this makes it unambigous and avoids duplications of data
+- Data structure normalization - e.g. using "first_name" and "last_name" in one API and "full_name" in another
+	- **WHY?** - This makes it difficult to compare data by consuming clients trying to figure out if "first_name" "last_name" is the same as "full_name"
+- Response code consistency - e.g. 404 means not found and nothing else 
+	- **WHY?** - Clients need to write code to handle error cases, they should not have to handle various execution paths for various APIs. The more APIs they consume the more difficult error handling will be
+    
 
 ### Include all non-trivial business logic
 
@@ -206,6 +229,13 @@ Reworked into these six RFCs:
     -   a framework for HTTP authentication
 
 ----------------------
+
+Authentication 
+----
+(coming)
+
+----------------------
+
 
 REST
 ----
@@ -1128,17 +1158,6 @@ Suppose a client doesn’t get a response to a POST. Should it retry?
 -   draft is slightly different (more about HTML forms) but idea is the same
 
 
-
-## Roadtesting 
-In this area you will find a bunch of items that we have in our beta APIs 
-
-* Macro services 
-	* 	transactions in services if very hard - difficult to define service boundaries 
-	* 	feels like a  code smell - eg. followers should return all profile information and not just the ids
-	*  required query parameters on large collections - should have the query parameter in the URL with an ID but that doesn't feel right also
-* Handling multiple domains e.g submissions and datasets when sharing a single swagger instance 
-* Given we are using domains details in the URLs /submissions/attachments etc the /metadata/doi feels wrong 
-* How to write 'importing' APIs without leaking the underlying functionality into the endpoints? 
 
 
 
