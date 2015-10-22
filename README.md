@@ -286,12 +286,12 @@ HTTP
 ----
 
 
-URIs
+URLs
 ----
 
 ### Basics
 
-URIs are based around plural nouns.
+URLs are based around plural nouns.
 
     * /things - identifies a collection of resources.
     * /things/(uuid) - identifies a single resource within a collection.
@@ -433,6 +433,7 @@ We prefer `PATCH` to `PUT` for updates. **✔** We do this, we like it.
 
 -   In reality, the client doesn’t replace the whole resource anyway (e.g. last modified time).
 
+
 ----------------------
 
 
@@ -456,9 +457,8 @@ e.g. adding/removing documents from folders.
 
 **?** Specified by [*this internet draft*](http://tools.ietf.org/html/draft-snell-link-method), but didn’t make it into the HTTP spec.
 
-### MISCELLANEOUSOTHERTHING
 
-**X** You can make up your own methods, but please don’t.
+
 
 ----------------------
 
@@ -559,7 +559,7 @@ If you still want to introduce a custom header:
 ----------------------
 
 
-## Validation errors
+## Validation errors - (needs expansion)
 
 **X** We’ve been returning these as 400 Bad Request:
 
@@ -765,7 +765,7 @@ This means that all clients have to download the (potentially very large) repres
 We didn’t know about *Prefer* header at the time - wish we had. Gives clients a way to indicate whether they want to get a full representation or not.
 
 
-### Symmetry
+### REST Symmetry
 
 The body of a `POST` request, and the body returned on a GET request to the URL from the `Location` header, should have the same structure.
 
@@ -934,6 +934,11 @@ I’m concerned we’re putting too much significance on “version 2” - some 
 Don’t change URLs - the resources themselves haven’t changed, just their representations
 
 **Communication, communication, communication**
+
+### What's wrong with API versions in URLS? 
+
+   
+    
 
 ----------------------
 
