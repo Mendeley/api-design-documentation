@@ -3,8 +3,21 @@
 
 Keywords have been adopted from [RFC conventions](https://tools.ietf.org/html/rfc2119) to signify requirements. 
 
+##Acknowledgments
+Current Maintainer is <joyce.stack@mendeley.com>
 
-## Collection Resources
+Original documented drafted and attributed to Matt Thomson in 2014. 
+
+This document borrowed heavily from:
+
+* [JSON API](http://jsonapi.org/format/) 
+* [Pay Pal](https://github.com/paypal/api-standards)
+
+
+
+## Resources
+
+### Collection Resources
 
 Collections of resources can be operated on using HTTP verbs. 
 
@@ -54,7 +67,7 @@ What could it be used for in a RESTful API? | Fetching a representation of the r
 
              
              
-##Filtering 
+#####Filtering 
 
 All resources **SHOULD** provide a filtering mechanism where it is expected to return a large collections. 
 
@@ -63,7 +76,7 @@ Query parameters **MUST** be used to filter on resources.
 	* e.g. /dogs?type=poodle  
 
              
-###Sorting
+#####Sorting
 
 A resource that is required to sort its collection based on some criteria **MUST** use the keyword <code>sort</code>
 
@@ -73,7 +86,7 @@ A resource that is required to sort its collection based on some criteria **MUST
 Sort order **MUST** use the <code>order</code> query parameter to indicate the sort order. The values **MUST** be <code>asc</code> or <code>desc</code>
  
              
-###Pagination 
+#####Pagination 
 
 Collection resources **MUST** have an upper bound on the number of items in the response. 
 
@@ -88,12 +101,21 @@ Clients **MUST** use **cursor-based** pagination. [Link headers](https://tools.i
 
 <code>limit</code> **MUST** be used to indicate the upper bounded value. 
 
-###Time selection queries
+#####Time selection queries
 modified_since or deleted_since or {property_name}_since **SHOULD** be provided if time selction is needed. 
             
+#####Bulk requests
+Developers **SHOULD NOT** write APIs. 
+
+e.g. <code>GET /dogs/id1,id2,id3,</code>         
+
+* different response formats from the same URI <code>GET /dog/id1</code> should return a single resource and not a collection of resources. 
+* breaks cacheability
+* URL doesn’t represent a resource
+* URLs have a maximum length    
              
-             
-             
+####Create a single resource    
+         
              
              
              
