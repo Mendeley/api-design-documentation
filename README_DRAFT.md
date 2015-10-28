@@ -64,6 +64,7 @@ Query parameters **MUST** be used to filter on resources.
 
              
 ###Sorting
+
 A resource that is required to sort its collection based on some criteria **MUST** use the keyword <code>sort</code>
 
 	* e.g. /dogs?sort=type
@@ -72,7 +73,24 @@ A resource that is required to sort its collection based on some criteria **MUST
 Sort order **MUST** use the <code>order</code> query parameter to indicate the sort order. The values **MUST** be <code>asc</code> or <code>desc</code>
  
              
-             
+###Pagination 
+
+Collection resources **MUST** have an upper bound on the number of items in the response. 
+
+Clients **MUST** use **cursor-based** pagination. [Link headers](https://tools.ietf.org/html/rfc5988) are used to link to other pages. Using Link headers keeps resource representations clean. 
+
+	GET /documents
+    200 OK
+    Link: </documents?marker=291d3064-4f74-4932-bfc8-4277d441705b>; rel="next";
+    [
+    ]
+    // do
+
+<code>limit</limit> **MUST** be used to indicate the upper bounded value. 
+
+###Time selection queries
+modified_since or deleted_since or {property_name}_since **SHOULD** be provided if time selction is needed. 
+            
              
              
              
