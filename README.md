@@ -29,6 +29,7 @@ Table of Contents
   * [HTTP Methods](#http-methods)
     * [Safety and idempotency](#safety-and-idempotency)
       * [Which one to use?](#which-one-to-use)
+    * [HTTP Cheat Sheet](#http-cheat-sheet)
     * [LINK / UNLINK](#link--unlink)
   * [CORS (cross-origin resource sharing)](#cors-cross-origin-resource-sharing)
   * [Status codes (needs expansion)](#status-codes-needs-expansion)
@@ -463,9 +464,7 @@ We prefer `PATCH` to `PUT` for updates. **✔** We do this, we like it.
 
 
 ----------------------
-
-
-                                                               
+                                                     
 
 ### LINK / UNLINK
 
@@ -474,7 +473,6 @@ Used to create/delete a link between two resources.
 e.g. adding/removing documents from folders.
 
 **?** Specified by [*this internet draft*](http://tools.ietf.org/html/draft-snell-link-method), but didn’t make it into the HTTP spec.
-
 
 
 
