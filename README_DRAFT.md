@@ -86,7 +86,7 @@ Clients **MUST** use **cursor-based** pagination. [Link headers](https://tools.i
     ]
     // do
 
-<code>limit</limit> **MUST** be used to indicate the upper bounded value. 
+<code>limit</code> **MUST** be used to indicate the upper bounded value. 
 
 ###Time selection queries
 modified_since or deleted_since or {property_name}_since **SHOULD** be provided if time selction is needed. 
