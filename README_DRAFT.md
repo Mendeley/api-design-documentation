@@ -1,21 +1,7 @@
-- [Collection Resources](#collection-resources)
-  - [Collection Resource](#collection-resource)
-    - [Filtering](#filtering)
-      - [Paging](#paging)
-        - [Hypermedia links](#hypermedia-links)
-      - [Time selection](#time-selection)
-      - [Sorting](#sorting)
-  - [Read Single Resource](#read-single-resource)
-  - [Update Single Resource](#update-single-resource)
-  - [Update Partial Single Resoure](#update-partial-single-resoure)
-  - [Delete Single Resource](#delete-single-resource)
-  - [Create New Resource](#create-new-resource)
-  - [Create New Resource - Consumer Supplied Identifier](#create-new-resource---consumer-supplied-identifier)
-  
 
 ## Conventions 
-[RFC conventions](https://tools.ietf.org/html/rfc2119)
 
+Keywords have been adopted from [RFC conventions](https://tools.ietf.org/html/rfc2119) to signify requirements. 
 
 
 ## Collection Resources
@@ -35,23 +21,23 @@ Collections of resources can be operated on using HTTP verbs.
 
 **Naming**
 
-Resources **MUST** follow the naming stanard of plural nouns. Single resources **MUST** follow the naming standard of a single noun. 
+Resources **MUST** be identified using plural nouns. A single resources **MUST** be identified using a single noun. 
 
 
 	* /things - identifies a collection of resources.
-    * /things/(uuid) - identifies a single resource within a collection.
+    * /things/(resource_identifer) - identifies a single resource within a collection
 
 
 **Namespaces**
-(should we map it to capabilites like they do in the architecture team - whats the difference? )
 
 Each collection of URI templates **MUST** include a namespace at the start of the URI. This namespace identifies a collection of related resources. This avoids collisions when there is multiple resources with similar names but different functionality.  
 
 **URI Templates**
 
-URI templates 
+URI templates **MUST** follow either the URI template
 
-/namespace/resource/
+<code>/{namespace}/{resource}/{resource_identifier}/{sub_resource}/{sub_resource_identifer}/</code>
+
 
 
 **HTTP Cheat Sheet**
@@ -66,4 +52,30 @@ Can requests include a body? | No | Yes | Yes | No | Yes | Yes (but no defined u
 What could it be used for in a RESTful API? | Fetching a representation of the resource | Creating a new resource from a representation | Replacing a resource with a representation | Deleting a resource | Applying partial updates to a resource | CORS | Fetching only the headers (e.g. pagination counts) | Nothing - breaks layered system constraint | Nothing - breaks layered system constraint       
 
 
+             
+             
+##Filtering 
+
+All resources **SHOULD** provide a filtering mechanism where it is expected to return a large collections. 
+
+Query parameters **MUST** be used to filter on resources. 
+
+	* e.g. /dogs?type=poodle  
+
+             
+###Sorting
+A resource that is required to sort its collection based on some criteria **MUST** use the keyword <code>sort</code>
+
+	* e.g. /dogs?sort=type
+	
+	
+Sort order **MUST** use the <code>order</code> query parameter to indicate the sort order. The values **MUST** be <code>asc</code> or <code>desc</code>
+ 
+             
+             
+             
+             
+             
+             
+             
              
