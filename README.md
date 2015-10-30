@@ -1,3 +1,20 @@
+Table of Contents
+=================
+
+   * [Conventions](#conventions)
+   * [Acknowledgments](#acknowledgments)
+   * [Resources](#resources)
+     * [Collection Resources](#collection-resources)
+         * [Filtering](#filtering)
+         * [Sorting](#sorting)
+         * [Pagination](#pagination)
+         * [Time selection queries](#time-selection-queries)
+         * [Bulk requests](#bulk-requests)
+      * [Create resource](#create-resource)
+         * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
+
 
 ## Conventions 
 
@@ -119,7 +136,7 @@ e.g. <code>GET /dogs/id1,id2,id3,</code>
 
 ------
              
-####Create resource    
+###Create resource    
 Creates a new resource using the POST verb. The response to a POST **MUST** be `201 Created`, with a `Location header` containing the URL where the resource can be found. The body **SHOULD** contain a representation of the resources (including any server-generated fields). 
 
 *URI template*
