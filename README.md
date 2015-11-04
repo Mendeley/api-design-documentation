@@ -1,19 +1,18 @@
-Table of Contents
-=================
-
-   * [Conventions](#conventions)
-   * [Acknowledgments](#acknowledgments)
-   * [Resources](#resources)
-     * [Collection Resources](#collection-resources)
-         * [Filtering](#filtering)
-         * [Sorting](#sorting)
-         * [Pagination](#pagination)
-         * [Time selection queries](#time-selection-queries)
-         * [Bulk requests](#bulk-requests)
+* [Conventions](#conventions)
+    * [Acknowledgments](#acknowledgments)
+    * [Resources](#resources)
+      * [Collection Resources](#collection-resources)
+          * [Filtering](#filtering)
+          * [Sorting](#sorting)
+          * [Pagination](#pagination)
+          * [Time selection queries](#time-selection-queries)
+          * [Bulk requests](#bulk-requests)
       * [Create resource](#create-resource)
-         * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
+          * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
+          * [Linking/Unlinking resources together](#linkingunlinking-resources-together)
+      * [Read a resource](#read-a-resource)
+      
+ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 
 ## Conventions 
@@ -29,6 +28,7 @@ This document borrowed heavily from:
 
 * [JSON API](http://jsonapi.org/format/) 
 * [Pay Pal](https://github.com/paypal/api-standards)
+* [Mark Nottingham Blog](https://www.mnot.net)
 
 
 
@@ -200,5 +200,42 @@ Clients **MAY** using the [*post once exactly*](https://tools.ietf.org/html/draf
          
 This is just a draft and has not been updated in 10+ years.       
          
+         
+#####Linking/Unlinking resources together 
+You **MAY** Link headers to indicate when one resource is linked to another. It is used in our current pagination mechanism. 
+  
+*Example request*   
+If you had to create a 'Dog' resource and link it to an 'Owner' then you could do:           
              
-   
+	￼￼￼POST /dogs
+	Link: </owners/291d3064-4f74-4932-bfc8-4277d441705b>; rel="owner";             
+             
+
+You **MAY** use the UNLINK header to unlink one resource from another. 
+             
+Specified by [*this internet draft*](http://tools.ietf.org/html/draft-snell-link-method), but it didn’t make it into the HTTP spec.              
+             
+             
+###Read a resource       
+Reads a single resource using the GET verb from a collection of resources. 
+
+GET calls can be called multiple times without any side effects i.e. idempotent.
+
+The response to a GET **MUST** be `200 OK`. The body **SHOULD** contain a representation of the resources including any server-generated fields. 
+
+
+*URI template*
+
+<code>GET /{namespace}/{resource}/{resource_identifier}</code>
+
+*Example request and response*
+
+ 	GET /datasets/articles/{id}
+    
+	{
+		"id": "53c9523b-7535-4501-9969-93706f14672a",
+		"title": "Distinct loci of lexical and semantic access deficits in aphasia: Evidence from voxel-based lesion-symptom mapping and diffusion tensor imaging",
+		"doi": "10.1016/j.cortex.2015.03.004",
+		"journal_id": "7be5c683-a7c2-4fe3-95c8-947b58706f2b"
+	}
+
