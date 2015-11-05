@@ -1,4 +1,3 @@
-
    * [Conventions](#conventions)
    * [Acknowledgments](#acknowledgments)
    * [Resources](#resources)
@@ -14,8 +13,9 @@
          * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
          * [Linking/Unlinking resources together](#linkingunlinking-resources-together)
      * [Read a resource](#read-a-resource)
-     * [Update a partial resource](#update-a-partial-resource)
-     * [Avoiding concurrent updates](#avoiding-concurrent-updates)
+     * [Update a resource](#update-a-resource)
+       * [Avoiding concurrent updates](#avoiding-concurrent-updates)
+     * [Delete a resource](#delete-a-resource)
 
       
  Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
@@ -266,10 +266,10 @@ The response to a GET **MUST** be `200 OK`. The body **MUST** contain a represen
 	}
 
 
-###Update a partial resource 
-Updates a single resource using the PATCH verb.  
+###Update a resource 
+Updates a single resource using the PATCH verb. Applies a partial update.  
 
-The response to oa PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. 
+The response to a PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. 
 
 
 *URI template*
@@ -286,8 +286,7 @@ The response to oa PATCH **MUST** be `200 OK`. The body **MUST** contain a repre
 
 
 
-
-###Avoiding concurrent updates
+####Avoiding concurrent updates
 Clients **MAY** use a precondition check of `If-Unmodified-Since` header on update requests. If specified, the resource in question will not be updated if there have been any other changes since the timestamp provided. Should be specified in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt) format e.g. Thu, 01 May 2014 10:07:28 GMT
 
 
@@ -296,5 +295,20 @@ It **MAY** be a requirement and the server can send back `428 Precondition Requi
 This **MAY** be used for GET requests e.g don’t download data that hasn’t changed since the client last requested it
 
 
+
+###Delete a resource 
+Deletes a single resource using the DELETE verb. The response to a DELETE **MUST** be `204 No Content`. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. The action may be forbidden by a paricular client so a HTTP status of `403 Forbidden` **MUST** be returned. 
+
+*URI template*
+
+<code>DELETE /{namespace}/{resource}/{resource_identifier}</code>
+
+*Example request and response*
+
+ 	DELETE /datasets/drafts/{id}
+    
+	204 no content
+	
+	
 
 
