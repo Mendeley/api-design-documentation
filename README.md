@@ -45,7 +45,7 @@ This document borrowed heavily from:
 
 ISO 8601 format **MUST** be used for all dates and times e.g. 2015-02-18T04:57:56Z
 
-**!** Unfortunately, some standard HTTP headers use their own format, defined in RFC 2822: Thu, 01 May 2014 10:07:28 GMT
+**!** Unfortunately, some standard HTTP headers use their own format, defined in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt): Thu, 01 May 2014 10:07:28 GMT
 
 Server-generated dates **MUST** be used everywhere as the server is the only reliable clock.
 
@@ -266,8 +266,20 @@ The response to a GET **MUST** be `200 OK`. The body **MUST** contain a represen
 	}
 
 
-###Update a resource 
+###Update a partial resource 
 Updates a single resource using the PATCH verb.  
 
-###Update partial resource
+The response to oa PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields.
+
+
+###Avoiding concurrent updates
+Clients **MAY** use a precondition check of `If-Unmodified-Since` header on update requests. If specified, the resource in question will not be updated if there have been any other changes since the timestamp provided. Should be specified in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt) format e.g. Thu, 01 May 2014 10:07:28 GMT
+
+
+It **MAY** be a requirement and the server can send back `428 Precondition Required` if there is no `If-Unmodified-Since` header.
+
+This **MAY** be used for GET requests e.g don’t download data that hasn’t changed since the client last requested it
+
+
+
 
