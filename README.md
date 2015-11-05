@@ -1,3 +1,5 @@
+Table of Contents
+=================
 
    * [Conventions](#conventions)
    * [Acknowledgments](#acknowledgments)
@@ -14,8 +16,8 @@
          * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
          * [Linking/Unlinking resources together](#linkingunlinking-resources-together)
      * [Read a resource](#read-a-resource)
-     * [Update a resource](#update-a-resource)
-     * [Update partial resource](#update-partial-resource)
+     * [Update a partial resource](#update-a-partial-resource)
+     * [Avoiding concurrent updates](#avoiding-concurrent-updates)
 
       
  Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
