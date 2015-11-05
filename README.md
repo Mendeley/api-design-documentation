@@ -1,16 +1,22 @@
-* [Conventions](#conventions)
-    * [Acknowledgments](#acknowledgments)
-    * [Resources](#resources)
-      * [Collection Resources](#collection-resources)
-          * [Filtering](#filtering)
-          * [Sorting](#sorting)
-          * [Pagination](#pagination)
-          * [Time selection queries](#time-selection-queries)
-          * [Bulk requests](#bulk-requests)
-      * [Create resource](#create-resource)
-          * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
-          * [Linking/Unlinking resources together](#linkingunlinking-resources-together)
-      * [Read a resource](#read-a-resource)
+
+   * [Conventions](#conventions)
+   * [Acknowledgments](#acknowledgments)
+   * [Resources](#resources)
+     * [Applies to all resources](#applies-to-all-resources)
+       * [Dates](#dates)
+     * [Collection Resources](#collection-resources)
+         * [Filtering](#filtering)
+         * [Sorting](#sorting)
+         * [Pagination](#pagination)
+         * [Time selection queries](#time-selection-queries)
+         * [Bulk requests](#bulk-requests)
+     * [Create resource](#create-resource)
+         * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
+         * [Linking/Unlinking resources together](#linkingunlinking-resources-together)
+     * [Read a resource](#read-a-resource)
+     * [Update a resource](#update-a-resource)
+     * [Update partial resource](#update-partial-resource)
+
       
  Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
@@ -33,6 +39,16 @@ This document borrowed heavily from:
 
 
 ## Resources
+
+### Applies to all resources
+####Dates
+
+ISO 8601 format **MUST** be used for all dates and times e.g. 2015-02-18T04:57:56Z
+
+**!** Unfortunately, some standard HTTP headers use their own format, defined in RFC 2822: Thu, 01 May 2014 10:07:28 GMT
+
+Server-generated dates **MUST** be used everywhere as the server is the only reliable clock.
+
 
 ### Collection Resources
 
@@ -137,7 +153,7 @@ e.g. <code>GET /dogs/id1,id2,id3,</code>
 ------
              
 ###Create resource    
-Creates a new resource using the POST verb. The response to a POST **MUST** be `201 Created`, with a `Location header` containing the URL where the resource can be found. The body **SHOULD** contain a representation of the resources (including any server-generated fields). 
+Creates a new resource using the POST verb. The response to a POST **MUST** be `201 Created`, with a `Location header` containing the URL where the resource can be found. The body **MUST** contain a representation of the resources (including any server-generated fields). 
 
 *URI template*
 
@@ -210,6 +226,16 @@ If you had to create a 'Dog' resource and link it to an 'Owner' then you could d
 	￼￼￼POST /dogs
 	Link: </owners/291d3064-4f74-4932-bfc8-4277d441705b>; rel="owner";             
              
+             
+*Example in pagination*
+This shows the link to the 'next' item in the list. 
+
+	GET /documents
+    200 OK
+    Link: </documents?marker=291d3064-4f74-4932-bfc8-4277d441705b>; rel="next";
+    [
+    ]
+    // do             
 
 You **MAY** use the UNLINK header to unlink one resource from another. 
              
@@ -221,7 +247,7 @@ Reads a single resource using the GET verb from a collection of resources.
 
 GET calls can be called multiple times without any side effects i.e. idempotent.
 
-The response to a GET **MUST** be `200 OK`. The body **SHOULD** contain a representation of the resources including any server-generated fields. 
+The response to a GET **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any server-generated fields. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. 
 
 
 *URI template*
@@ -238,4 +264,10 @@ The response to a GET **MUST** be `200 OK`. The body **SHOULD** contain a repres
 		"doi": "10.1016/j.cortex.2015.03.004",
 		"journal_id": "7be5c683-a7c2-4fe3-95c8-947b58706f2b"
 	}
+
+
+###Update a resource 
+Updates a single resource using the PATCH verb.  
+
+###Update partial resource
 
