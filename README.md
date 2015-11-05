@@ -1,5 +1,3 @@
-Table of Contents
-=================
 
    * [Conventions](#conventions)
    * [Acknowledgments](#acknowledgments)
@@ -271,7 +269,7 @@ The response to a GET **MUST** be `200 OK`. The body **MUST** contain a represen
 ###Update a partial resource 
 Updates a single resource using the PATCH verb.  
 
-The response to oa PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields.
+The response to oa PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. 
 
 
 *URI template*
@@ -293,7 +291,7 @@ The response to oa PATCH **MUST** be `200 OK`. The body **MUST** contain a repre
 Clients **MAY** use a precondition check of `If-Unmodified-Since` header on update requests. If specified, the resource in question will not be updated if there have been any other changes since the timestamp provided. Should be specified in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt) format e.g. Thu, 01 May 2014 10:07:28 GMT
 
 
-It **MAY** be a requirement and the server can send back `428 Precondition Required` if there is no `If-Unmodified-Since` header.
+It **MAY** be a requirement and the server can send back `428 Precondition Required` if there is no `If-Unmodified-Since` header. A HTTP status of `412 Precondition Failed` **MUST** be returned if the update fails. 
 
 This **MAY** be used for GET requests e.g don’t download data that hasn’t changed since the client last requested it
 
