@@ -274,6 +274,21 @@ Updates a single resource using the PATCH verb.
 The response to oa PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields.
 
 
+*URI template*
+
+<code>PATCH /{namespace}/{resource}/{resource_identifier}</code>
+
+*Example request and response*
+
+ 	PATCH /datasets/drafts/{id}
+    
+	{
+     "name": "Testing One Two"
+    }
+
+
+
+
 ###Avoiding concurrent updates
 Clients **MAY** use a precondition check of `If-Unmodified-Since` header on update requests. If specified, the resource in question will not be updated if there have been any other changes since the timestamp provided. Should be specified in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt) format e.g. Thu, 01 May 2014 10:07:28 GMT
 
