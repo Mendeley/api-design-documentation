@@ -16,6 +16,7 @@
      * [Update a resource](#update-a-resource)
        * [Avoiding concurrent updates](#avoiding-concurrent-updates)
      * [Delete a resource](#delete-a-resource)
+	 * [Nesting Resources](#nesting-resources)
 
       
  Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
@@ -67,7 +68,7 @@ Collections of resources can be operated on using HTTP verbs.
 
 **Naming**
 
-Resources **MUST** be identified using plural nouns. A single resources **MUST** be identified using a single noun. 
+Resources **MUST** be identified using plural nouns. A single resource **MUST** be identified using a single noun. 
 
 
 	* /things - identifies a collection of resources.
@@ -284,7 +285,7 @@ The response to a PATCH **MUST** be `200 OK`. The body **MUST** contain a repres
      "name": "Testing One Two"
     }
 
-
+Beware of cases where `PATCH /resource1` can affect the state of `/resource2`.
 
 ####Avoiding concurrent updates
 Clients **MAY** use a precondition check of `If-Unmodified-Since` header on update requests. If specified, the resource in question will not be updated if there have been any other changes since the timestamp provided. Should be specified in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt) format e.g. Thu, 01 May 2014 10:07:28 GMT
@@ -310,5 +311,28 @@ Deletes a single resource using the DELETE verb. The response to a DELETE **MUST
 	204 no content
 	
 	
+##Nesting Resources
+Sometimes it maybe necessary to nest resources because a sub resource can't exist without a parent resource. Developers are encouraged to think about if resources need to be nested and if they could be identified by a single ID. 
+
+*Problems with multiple identifiers*
+
+Maintaining multiple IDs can make extra work for clients having to maintain the relationships between parent and child. 
+
+Overhead on server developers who have to validate multiple IDs. 
 
 
+*URI template*
+
+<code>VERB /{namespace}/{resource}/{resource_identifier}/{sub_resource}/{sub_resource_identifier}</code>
+
+*Example request*
+
+ 	GET /submissions/fb5cd024-fb53-3366-b3f2-0dd6910cb73e/attachments/60721cc1-c1f3-678c-4235-f239d6415df1
+    
+*Bad example*	
+  
+  	GET /library/documents/7135271181/file/3221525ea6f746b577b6a8ad40d89df3f41f776a/2589311
+  	
+In this example we have no context what the IDs are identifying.  	
+  	
+  	
