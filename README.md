@@ -17,6 +17,7 @@
        * [Avoiding concurrent updates](#avoiding-concurrent-updates)
      * [Delete a resource](#delete-a-resource)
 	 * [Nesting Resources](#nesting-resources)
+	 * [Complex Operations (Actions)](#complex-operations-actions)
 
       
  Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
@@ -109,6 +110,13 @@ Query parameters **MUST** be used to filter on resources.
 
 	* e.g. /dogs?type=poodle  
 
+#####Filtering large collections
+Some collections are too large to return in one response e.g. catalog, institutions or location information. 
+
+	* e.g. /institutions?hint=LON OR /catalog?doi=10.1145/1996092.1996098
+
+Query parameters **MUST** be used to filter on resources. One or more query parameters **MUST** be mandatory. 
+
              
 #####Sorting
 
@@ -149,6 +157,7 @@ e.g. <code>GET /dogs/id1,id2,id3,</code>
 * breaks cacheability
 * URL doesn’t represent a resource
 * URLs have a maximum length    
+
 
 
 ------
@@ -314,9 +323,13 @@ Deletes a single resource using the DELETE verb. The response to a DELETE **MUST
 ##Nesting Resources
 Sometimes it maybe necessary to nest resources because a sub resource can't exist without a parent resource. Developers are encouraged to think about if resources need to be nested and if they could be identified by a single ID. 
 
+URLS **MUST** not exceed two levels of nesting. 
+
+All standards as outlined in the [Resources](#resources) section should be adhered to. 
+
 *Problems with multiple identifiers*
 
-Maintaining multiple IDs can make extra work for clients having to maintain the relationships between parent and child. 
+Maintaining multiple IDs can make extra work for clients having to maintain the relationships between parent and child resources. 
 
 Overhead on server developers who have to validate multiple IDs. 
 
@@ -334,5 +347,30 @@ Overhead on server developers who have to validate multiple IDs.
   	GET /library/documents/7135271181/file/3221525ea6f746b577b6a8ad40d89df3f41f776a/2589311
   	
 In this example we have no context what the IDs are identifying.  	
+  	
+##Complex Operations (Actions)
+Some actions don’t naturally map to a HTTP verb. Verbs such as 'import', 'activate', 'cancel', 'validate', 'accept', 'reset', 'verify', and 'deny' are examples. These are usually a procedural concept. 
+
+
+In this case you **MUST** use a POST with a verb. The verb **MUST** be the last segment of the URI. This helps in identifying these operations. 
+
+Developers are encouraged to consider resource design alternatives over using this approach. This shoud be used infrequently as its an anti-pattern. 
+
+*Risks* 
+(I've taken these from Pay Pals standards as I think they apply here too.)
+
+* The URI can't be extended to include a sub-resource beyond the verb.
+* There is no corresponding read actions so this can be difficult to test.
+* Retriving a history or audit of the call will have to live in another resource `e.g. send_password_reset_email_history`
+ 
+
+*URI template for action on a single resource*
+
+<code>POST /{namespace}/{resource}/{resource_id}/actions/{verb}</code>  	
+*Example request*  	
+
+  	POST /profiles/fb5cd024-fb53-3366-b3f2-0dd6910cb73e/actions/send_password_reset_email
+  	
+  	
   	
   	
