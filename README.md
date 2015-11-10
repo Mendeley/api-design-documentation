@@ -20,7 +20,7 @@
 	 * [Complex Operations (Actions)](#complex-operations-actions)
 
       
- Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 
 ## Conventions 
