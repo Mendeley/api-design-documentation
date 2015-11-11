@@ -1,27 +1,28 @@
 * [Conventions](#conventions)
-   * [Acknowledgments](#acknowledgments)
-   * [Caution](#caution)
-   * [Resources](#resources)
-     * [Applies to all resources](#applies-to-all-resources)
-         * [Authentication](#authentication)
-         * [Versioning](#versioning)
-       * [Dates](#dates)
-     * [Collection Resources](#collection-resources)
-         * [Filtering](#filtering)
-         * [Filtering large collections](#filtering-large-collections)
-         * [Sorting](#sorting)
-         * [Pagination](#pagination)
-         * [Time selection queries](#time-selection-queries)
-         * [Bulk requests](#bulk-requests)
-     * [Create resource](#create-resource)
-         * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
-         * [Linking/Unlinking resources together](#linkingunlinking-resources-together)
-     * [Read a resource](#read-a-resource)
-     * [Update a resource](#update-a-resource)
-       * [Avoiding concurrent updates](#avoiding-concurrent-updates)
-     * [Delete a resource](#delete-a-resource)
-   * [Nesting Resources](#nesting-resources)
-   * [Complex Operations (Actions)](#complex-operations-actions)
+  * [Acknowledgments](#acknowledgments)
+  * [Caution](#caution)
+  * [Resources](#resources)
+    * [Applies to all resources](#applies-to-all-resources)
+      * [Authentication](#authentication)
+      * [Versioning](#versioning)
+      * [Dates](#dates)
+    * [Collection Resources](#collection-resources)
+        * [Filtering](#filtering)
+        * [Filtering large collections](#filtering-large-collections)
+        * [Sorting](#sorting)
+        * [Pagination](#pagination)
+        * [Time selection queries](#time-selection-queries)
+        * [Bulk requests](#bulk-requests)
+    * [Create resource](#create-resource)
+        * [Preventing duplicate creation of resources](#preventing-duplicate-creation-of-resources)
+        * [Linking/Unlinking resources together](#linkingunlinking-resources-together)
+    * [Read a resource](#read-a-resource)
+    * [Update a resource](#update-a-resource)
+      * [Avoiding concurrent updates](#avoiding-concurrent-updates)
+    * [Delete a resource](#delete-a-resource)
+  * [Nesting Resources](#nesting-resources)
+  * [Complex Operations (Actions)](#complex-operations-actions)
+
 
       
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
@@ -70,10 +71,10 @@ Reworked into these six RFCs:
 
 ### Applies to all resources
 
-#####Authentication
+####Authentication
 coming shortly  
 
-#####Versioning 
+####Versioning 
 (this needs further clarifications)
 
 **Golden Rule** 
