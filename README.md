@@ -1,10 +1,14 @@
-   * [Conventions](#conventions)
+* [Conventions](#conventions)
    * [Acknowledgments](#acknowledgments)
+   * [Caution](#caution)
    * [Resources](#resources)
      * [Applies to all resources](#applies-to-all-resources)
+         * [Authentication](#authentication)
+         * [Versioning](#versioning)
        * [Dates](#dates)
      * [Collection Resources](#collection-resources)
          * [Filtering](#filtering)
+         * [Filtering large collections](#filtering-large-collections)
          * [Sorting](#sorting)
          * [Pagination](#pagination)
          * [Time selection queries](#time-selection-queries)
@@ -16,8 +20,8 @@
      * [Update a resource](#update-a-resource)
        * [Avoiding concurrent updates](#avoiding-concurrent-updates)
      * [Delete a resource](#delete-a-resource)
-	 * [Nesting Resources](#nesting-resources)
-	 * [Complex Operations (Actions)](#complex-operations-actions)
+   * [Nesting Resources](#nesting-resources)
+   * [Complex Operations (Actions)](#complex-operations-actions)
 
       
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
@@ -39,10 +43,72 @@ This document borrowed heavily from:
 * [Mark Nottingham Blog](https://www.mnot.net)
 
 
+## Caution
+**Don’t use RFC2616.** 
+
+RFC2616 was the reference for HTTP, but now it’s deprecated. You’ll still see it referred to in lots of places.
+
+Source: [mnot’s blog](https://www.mnot.net/blog/2014/06/07/rfc2616_is_dead)
+
+Reworked into these six RFCs:
+
+-   [RFC7230](https://tools.ietf.org/html/rfc7230) - HTTP/1.1: Message Syntax and Routing
+    -   low-level message parsing and connection management
+-   [RFC7231](https://tools.ietf.org/html/rfc7231) - HTTP/1.1: Semantics and Content
+    -   methods, status codes and headers
+-   [RFC7232](https://tools.ietf.org/html/rfc7232) - HTTP/1.1: Conditional Requests
+    -   e.g., If-Modified-Since RFC7233 - HTTP/1.1: Range Requests - getting partial content
+-   [RFC7234](https://tools.ietf.org/html/rfc7234) - HTTP/1.1: Caching
+    -   browser and intermediary caches
+-   [RFC7235](https://tools.ietf.org/html/rfc7235) - HTTP/1.1: Authentication
+    -   a framework for HTTP authentication
+-   [RFC5988](https://tools.ietf.org/html/rfc5988) - HTTP/1.1: Web Linking      
+    https://tools.ietf.org/html/rfc5988 - Web Linking
+
 
 ## Resources
 
 ### Applies to all resources
+
+#####Authentication
+coming shortly  
+
+#####Versioning 
+(this needs further clarifications)
+
+**Golden Rule** 
+
+		Once we've released an API, we must NOT make breaking changes to it
+
+        (even if it's not being used, or if it's only deployed to staging, 
+        or if there's only one client, or if we marked it as beta, 
+        or if all of the clients are sitting in the same room as us, 
+        or if we're really-really-careful-yes-we- really-mean-it-this-time)
+
+
+*Content Negotiation* 
+
+Use HTTP's content negotiation mechanism for versioning. Custom media types are used in the API to let the consumers choose the format of the data they wish to receive. This is done by adding the `Accept` header when you make a request. Media types are specific to resources, allowing them to change independently.  
+
+	application/vnd.mendeley-<RESOURCE_TYPE>.<VERSION>+json
+	
+	e.g. application/vnd.mendeley-document.1+json.  The "1" here is the version number of the representation.
+	
+	
+Both client and servers are responsible for negotiation to be successful. 
+
+**Client Responsibilities** 	
+
+* Clients **MUST** send an appropiate resource Media type in the header 
+		* e.g. Accept: application/vnd.mendeley-document.1+json
+
+
+**Server Responsibilities**   	
+
+* Servers **MUST** respond with a Content-Type header 
+		* e.g. Content-Type: application/vnd.mendeley-document.1+json 	
+	
+
 ####Dates
 
 ISO 8601 format **MUST** be used for all dates and times e.g. 2015-02-18T04:57:56Z
