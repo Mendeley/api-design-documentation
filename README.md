@@ -180,33 +180,14 @@ Query parameters **MUST** be used to filter on resources.
 #####Filtering large collections
 Some collections are too large to return in one response e.g. catalog, institutions or location information. 
 
-	* e.g. /institutions?hint=LON OR /catalog?doi=10.1145/1996092.1996098
+In such cases the default **SHOULD** default to returning a limited number of results or enforcing a CAP. What is the 'default' is specific to the resource in question e.g. most popular locations/institutions.
 
-Query parameters **MUST** be used to filter on resources. One or more query parameters **MUST** be mandatory. 
-
-             
-#####Sorting
-
-A resource that is required to sort its collection based on some criteria **MUST** use the keyword <code>sort</code>
-
-	* e.g. /dogs?sort=type
-	
-	
-Sort order **MUST** use the <code>order</code> query parameter to indicate the sort order. The values **MUST** be <code>asc</code> or <code>desc</code>
- 
+Mandatory query parameters **MAY** also be used. 
+              
              
 #####Pagination 
 
-Collection resources **MUST** have an upper bound on the number of items in the response. 
-
-Clients **MUST** use **cursor-based** pagination. [Link headers](https://tools.ietf.org/html/rfc5988) are used to link to other pages. Using Link headers keeps resource representations clean. 
-
-	GET /documents
-    200 OK
-    Link: </documents?marker=291d3064-4f74-4932-bfc8-4277d441705b>; rel="next";
-    [
-    ]
-    // do
+Collection resources **MUST** must be paginated. 
 
 <code>limit</code> **MUST** be used to indicate the upper bounded value. 
 
@@ -273,16 +254,15 @@ GET response will usually have more fields, but that’s OK. There are some some
 
 Clients **MAY** using the [*post once exactly*](https://tools.ietf.org/html/draft-nottingham-http-poe-00) pattern to avoid duplicates being created. 
 
-	POST /poe/documents
-
-    200 OK
-    Location: /poe/documents/291d3064-4f74-4932-bfc8-4277d441705b
-
+First Attempt works OK: 
+    
     ￼￼POST /poe/documents/291d3064-4f74-4932-bfc8-4277d441705b
     {"title": "Underwater basket weaving"}
 
     200 OK
     Location: /documents/7ab2c167-8e48-4fb8-85b0-73cdb8662a64
+
+Second Attempt works errors: 
 
     ￼POST /poe/documents/291d3064-4f74-4932-bfc8-4277d441705b
     {"title": "Underwater basket weaving"} 
@@ -291,11 +271,11 @@ Clients **MAY** using the [*post once exactly*](https://tools.ietf.org/html/draf
     Allow: GET
           
          
-This is just a draft and has not been updated in 10+ years.       
+This is just a draft and has not been updated in 10+ years but is a suggested pattern.        
          
          
 #####Linking/Unlinking resources together 
-You **MAY** Link headers to indicate when one resource is linked to another. It is used in our current pagination mechanism. 
+You **MAY** use LINK and UNLINK hypermedia links to indicate when one resource is linked/unlinked to another. 
   
 *Example request*   
 If you had to create a 'Dog' resource and link it to an 'Owner' then you could do:           
@@ -314,10 +294,9 @@ This shows the link to the 'next' item in the list.
     ]
     // do             
 
-You **MAY** use the UNLINK header to unlink one resource from another. 
+You **MAY** use the UNLINK method to unlink one resource from another. 
              
-Specified by [*this internet draft*](http://tools.ietf.org/html/draft-snell-link-method), but it didn’t make it into the HTTP spec.              
-             
+Specified by [*this internet draft*](http://tools.ietf.org/html/draft-snell-link-method), but at the time of writing is not an approved RFC.              
              
 ###Read a resource       
 Reads a single resource using the GET verb from a collection of resources. 
@@ -346,7 +325,9 @@ The response to a GET **MUST** be `200 OK`. The body **MUST** contain a represen
 ###Update a resource 
 Updates a single resource using the PATCH verb. Applies a partial update.  
 
-The response to a PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. 
+The response to a PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. If the patch is invalid then a `422 Unprocessable Entity` should be returned. 
+
+If applying the PATCH puts the resources in an invalid state then a `409 Conflict` should be returned.  
 
 
 *URI template*
@@ -374,7 +355,7 @@ This **MAY** be used for GET requests e.g don’t download data that hasn’t ch
 
 
 ###Delete a resource 
-Deletes a single resource using the DELETE verb. The response to a DELETE **MUST** be `204 No Content`. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. The action may be forbidden by a paricular client so a HTTP status of `403 Forbidden` **MUST** be returned. 
+Deletes a single resource using the DELETE verb. The response to a DELETE **MUST** be `204 No Content`. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. The action may be forbidden by a particular client so a HTTP status of `403 Forbidden` **MUST** be returned. 
 
 *URI template*
 
