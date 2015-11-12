@@ -9,7 +9,6 @@
     * [Collection Resources](#collection-resources)
         * [Filtering](#filtering)
         * [Filtering large collections](#filtering-large-collections)
-        * [Sorting](#sorting)
         * [Pagination](#pagination)
         * [Time selection queries](#time-selection-queries)
         * [Bulk requests](#bulk-requests)
@@ -22,6 +21,7 @@
     * [Delete a resource](#delete-a-resource)
   * [Nesting Resources](#nesting-resources)
   * [Complex Operations (Actions)](#complex-operations-actions)
+    * [The 'import' action](#the-import-action)
 
 
       
@@ -187,7 +187,18 @@ Mandatory query parameters **MAY** also be used.
              
 #####Pagination 
 
-Collection resources **MUST** must be paginated. 
+Large collection resources **MUST** have an upper bound on the number of items in the response. It is not desirable for either our servers or our clients for us to dump all the data in one go. 
+
+If a client requires a mechanism to iterate over a collection of resources then **cursor-based** pagination **MUST** be used. 
+
+[Link headers](https://tools.ietf.org/html/rfc5988) are used to link to other pages. Using Link headers keeps resource representations clean. 
+
+	GET /documents
+    200 OK
+    Link: </documents?marker=291d3064-4f74-4932-bfc8-4277d441705b>; rel="next";
+    [
+    ]
+   // do
 
 <code>limit</code> **MUST** be used to indicate the upper bounded value. 
 
@@ -397,10 +408,12 @@ Overhead on server developers who have to validate multiple IDs.
 In this example we have no context what the IDs are identifying.  	
   	
 ##Complex Operations (Actions)
-Some actions don’t naturally map to a HTTP verb. Verbs such as 'import', 'activate', 'cancel', 'validate', 'accept', 'reset', 'verify', and 'deny' are examples. These are usually a procedural concept. 
+Some actions don’t naturally map to a HTTP verb. Verbs such as 'activate', 'cancel', 'validate', 'accept', 'reset', 'verify', and 'deny' are examples. These are usually a procedural concept. 
 
 
-In this case you **MUST** use a POST with a verb. The verb **MUST** be the last segment of the URI. This helps in identifying these operations. 
+In this case you **MUST** use a POST with a verb. The word `action` **MUST** be the last segment of the URI. The `action` **MUST** be used in the body of the POST. This allows us to version the content in the cases where no request body is provided e.g. resending verification email. 
+
+The request Content Type **MUST** be `application/vnd.mendeley-{resourcetype}-action.1+json`. 
 
 Developers are encouraged to consider resource design alternatives over using this approach. This shoud be used infrequently as its an anti-pattern. 
 
@@ -414,11 +427,25 @@ Developers are encouraged to consider resource design alternatives over using th
 
 *URI template for action on a single resource*
 
-<code>POST /{namespace}/{resource}/{resource_id}/actions/{verb}</code>  	
+<code>POST /{namespace}/{resource}/{resource_id}/actions</code>  	
 *Example request*  	
 
-  	POST /profiles/fb5cd024-fb53-3366-b3f2-0dd6910cb73e/actions/send_password_reset_email
+  	POST /datasets/drafts/bnwvgpfvhf/actions
   	
+  	{
+    	"action": "send_password_reset_email"
+    	// any other additional information
+  	}
+  	
+  	
+###The 'import' action
+Before considering making an `action` of an import action then consider: 
+
+	* What resource are you importing? 
+	* Should you consider reusing an existing resource with a different Content Type? 
+	* Look at the attributes you are using to POST to the import - are they similar to attributes in another resource? 		* Is their a natural fit? 
+	
+
   	
   	
   	
