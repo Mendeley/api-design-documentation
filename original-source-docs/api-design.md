@@ -292,7 +292,7 @@ Use standard HTTP headers to indicate how messages should be processed
 >
 > e.g. Cache-Control header indicates how long to cache
 
-Think in terms of maniuplating resources, rather than making remote
+Think in terms of manipulating resources, rather than making remote
 procedure calls
 
 > e.g. change the "is read" flag on a document, rather than marking a

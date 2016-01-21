@@ -100,7 +100,7 @@ Both client and servers are responsible for negotiation to be successful.
 
 **Client Responsibilities** 	
 
-* Clients **MUST** send an appropiate resource Media type in the header 
+* Clients **MUST** send an appropriate resource Media type in the header 
 		* e.g. Accept: application/vnd.mendeley-document.1+json
 
 
@@ -140,7 +140,7 @@ Resources **MUST** be identified using plural nouns. A single resource **MUST** 
 
 
 	* /things - identifies a collection of resources.
-    * /things/(resource_identifer) - identifies a single resource within a collection
+    * /things/(resource_identifier) - identifies a single resource within a collection
 
 
 **Namespaces**
@@ -151,7 +151,7 @@ Each collection of URI templates **MUST** include a namespace at the start of th
 
 URI templates **MUST** follow either the URI template
 
-<code>/{namespace}/{resource}/{resource_identifier}/{sub_resource}/{sub_resource_identifer}/</code>
+<code>/{namespace}/{resource}/{resource_identifier}/{sub_resource}/{sub_resource_identifier}/</code>
 
 
 
@@ -203,7 +203,7 @@ If a client requires a mechanism to iterate over a collection of resources then 
 <code>limit</code> **MUST** be used to indicate the upper bounded value. 
 
 #####Time selection queries
-modified_since or deleted_since or {property_name}_since **SHOULD** be provided if time selction is needed. 
+modified_since or deleted_since or {property_name}_since **SHOULD** be provided if time selection is needed. 
             
 #####Bulk requests
 Developers **SHOULD NOT** write bulk APIs. 
@@ -415,14 +415,14 @@ In this case you **MUST** use a POST with a verb. The word `action` **MUST** be 
 
 The request Content Type **MUST** be `application/vnd.mendeley-{resourcetype}-action.1+json`. 
 
-Developers are encouraged to consider resource design alternatives over using this approach. This shoud be used infrequently as its an anti-pattern. 
+Developers are encouraged to consider resource design alternatives over using this approach. This should be used infrequently as its an anti-pattern. 
 
 *Risks* 
 (I've taken these from Pay Pals standards as I think they apply here too.)
 
 * The URI can't be extended to include a sub-resource beyond the verb.
 * There is no corresponding read actions so this can be difficult to test.
-* Retriving a history or audit of the call will have to live in another resource `e.g. send_password_reset_email_history`
+* Retrieving a history or audit of the call will have to live in another resource `e.g. send_password_reset_email_history`
  
 
 *URI template for action on a single resource*

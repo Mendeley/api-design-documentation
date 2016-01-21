@@ -10,7 +10,7 @@ Borrowed items from this [API checklist](https://mathieu.fenniak.net/the-api-che
 
 ### Why? 
 
-[ ] Have you considered why this API is valuable in the API program? Is it internal only? Does it enable features across mutiple platforms? Is their one there already doing a similar thing? Can you extend an existing one? 
+[ ] Have you considered why this API is valuable in the API program? Is it internal only? Does it enable features across multiple platforms? Is their one there already doing a similar thing? Can you extend an existing one? 
 
 ### What?  
 
@@ -32,7 +32,7 @@ Borrowed items from this [API checklist](https://mathieu.fenniak.net/the-api-che
 
 [ ] Have you read the URLs section of the [API design document](https://github.com/Mendeley/api-design-documentation#urls) and applied them? If you find an undocumented use case please raise an issue in GitHub  
 
-[ ] Have you provided a vendor-specific media type like below? Is the resource type used sinuglar? 
+[ ] Have you provided a vendor-specific media type like below? Is the resource type used singular? 
 		
 		e.g. application/vnd.mendeley-<RESOURCE_TYPE>.<VERSION>+json
 

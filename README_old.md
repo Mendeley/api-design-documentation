@@ -17,7 +17,7 @@ Table of Contents
     * [What is REST?](#what-is-rest)
     * [REST constraints](#rest-constraints)
     * [Uniform Interface](#uniform-interface)
-    * [Addiontal notes on Uniform Interface](#addiontal-notes-on-uniform-interface)
+    * [Additional notes on Uniform Interface](#additional-notes-on-uniform-interface)
     * [What does this mean in practice?](#what-does-this-mean-in-practice)
     * [Hypermedia](#hypermedia)
   * [HTTP](#http)
@@ -52,7 +52,7 @@ Table of Contents
   * [Compatibility and versioning](#compatibility-and-versioning)
   * [The golden rule](#the-golden-rule)
     * [What changes are OK?](#what-changes-are-ok)
-      * [Additonal notes](#additonal-notes)
+      * [Additional notes](#additional-notes)
     * [What changes are bad?](#what-changes-are-bad)
     * [How can I make breaking changes?](#how-can-i-make-breaking-changes)
     * [What's wrong with API versions in URLS?](#whats-wrong-with-api-versions-in-urls)
@@ -167,7 +167,7 @@ Guiding principles
 **WHY?**	
 
 - it drives adoption because
-	- this allows developers to quickly become familiar with APIs because they are predicatable, easy to learn and to remember.  
+	- this allows developers to quickly become familiar with APIs because they are predictable, easy to learn and to remember.  
 
 	- they are easy to integrate with 
 	
@@ -177,7 +177,7 @@ Guiding principles
 ### Types of consistency 
 
 - Data content normalization - if one API uses “f” and another uses “female” and another uses “woman” when describing gender 
-	-  **WHY?** - this makes it unambigous and avoids duplications of data
+	-  **WHY?** - this makes it unambiguous and avoids duplications of data
 - Data structure normalization - e.g. using "first_name" and "last_name" in one API and "full_name" in another
 	- **WHY?** - This makes it difficult to compare data by consuming clients trying to figure out if "first_name" "last_name" is the same as "full_name"
 - Response code consistency - e.g. 404 means not found and nothing else 
@@ -261,7 +261,7 @@ REST
         -   responses can define themselves as cacheable or not, improves performance
 -   Layered system
     -   a client cannot ordinarily tell whether it is connected directly to the end server, or to an intermediary along the way.
-        -   load balancing, caching, securiy
+        -   load balancing, caching, security
 -   Code On Demand (Optional)
     -   servers changing client behaviour by sending code to clients (e.g. Java applets).
         -   We don’t do this
@@ -279,7 +279,7 @@ REST
 -   [Hypermedia as the engine of application state (HATEOAS)](#Hypermedia)
     -   clients make state transition using links in the messages warning - here be dragons
 
-### Addiontal notes on Uniform Interface
+### Additional notes on Uniform Interface
 
 -   Uniform interface decouples the architecture, allows client and server to evolve independently
 -   Resources are the entities in the system, representations are the message contents
@@ -297,7 +297,7 @@ REST
 -   Use standard HTTP headers to indicate how messages should be processed
     -   e.g. Content-Type header indicates which parser to use
     -   e.g. Cache-Control header indicates how long to cache
--   Think in terms of maniuplating resources, rather than making remote procedure calls
+-   Think in terms of manipulating resources, rather than making remote procedure calls
     -   e.g. change the “is read” flag on a document, rather than marking a document as read
 -   Think about making resources cacheable
 
@@ -886,7 +886,7 @@ Advertising instability isn’t enough - people might not read the docs, they’
 
 **✔** Fixing a 5xx server error.
 
-#### Additonal notes
+#### Additional notes
 
 -   Aiming to give clearer guidance about what changes we’ll allow ourselves to make - we can’t expect clients to upgrade on every change, so need to agree guidelines so that we can make changes safely **Work In Progress**
 
@@ -1072,7 +1072,7 @@ What if we had to change the desktop client ID? How many code changes would we h
 
 **?** We currently have a `platform-only` client to restrict access
 
--   which restricts servcies to other platform services only
+-   which restricts services to other platform services only
 -   the service should never be used/exposed to external clients
 -   we don’t like this at the moment as its difficult to know which services exactly have restricted access
 
