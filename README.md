@@ -346,7 +346,7 @@ Content-Type must be set to the resource's custom media type eg. application/vnd
 
 <code>PATCH /{namespace}/{resource}/{resource_identifier}</code>
 
-*Example request and response*
+*Example request*
 
     PATCH /datasets/drafts/{id}
 	{
@@ -369,7 +369,7 @@ Removes properties of a single resource using the PATCH verb and a subset (remov
 
 Content-Type must be set to application/json-patch+json
 
-*Example request and response*
+*Example request*
 
     PATCH /datasets/drafts/{id}
     [
