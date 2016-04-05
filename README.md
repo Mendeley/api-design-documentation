@@ -324,8 +324,7 @@ The response to a GET **MUST** be `200 OK`. The body **MUST** contain a represen
 
 *Example request and response*
 
- 	GET /datasets/articles/{id}
-    
+    GET /datasets/articles/{id}    
 	{
 		"id": "53c9523b-7535-4501-9969-93706f14672a",
 		"title": "Distinct loci of lexical and semantic access deficits in aphasia: Evidence from voxel-based lesion-symptom mapping and diffusion tensor imaging",
@@ -349,13 +348,11 @@ Content-Type must be set to the resource's custom media type eg. application/vnd
 
 *Example request and response*
 
-<code>
- 	PATCH /datasets/drafts/{id}
- 	
+    PATCH /datasets/drafts/{id}
 	{
      "name": "Testing One Two"
     }
-</code>    
+  
 Beware of cases where `PATCH /resource1` can affect the state of `/resource2`.
 
 ####Avoiding concurrent updates
@@ -374,13 +371,11 @@ Content-Type must be set to application/json-patch+json
 
 *Example request and response*
 
-<code>
- 	PATCH /datasets/drafts/{id}
-
+    PATCH /datasets/drafts/{id}
     [
      { "op": "remove", "path": "/name" }
     ]
-</code>  
+ 
 The "remove" operation removes the value at the target location.
 
 The target location MUST exist for the operation to be successful.
@@ -395,7 +390,7 @@ Deletes a single resource using the DELETE verb. The response to a DELETE **MUST
 
 *Example request and response*
 
- 	DELETE /datasets/drafts/{id}
+    DELETE /datasets/drafts/{id}
     
 	204 no content
 	
