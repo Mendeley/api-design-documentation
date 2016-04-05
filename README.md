@@ -18,6 +18,7 @@
     * [Read a resource](#read-a-resource)
     * [Update a resource](#update-a-resource)
       * [Avoiding concurrent updates](#avoiding-concurrent-updates)
+    * [Remove properties of a resource](#remove-properties-of-a-resource)
     * [Delete a resource](#delete-a-resource)
   * [Nesting Resources](#nesting-resources)
   * [Complex Operations (Actions)](#complex-operations-actions)
@@ -340,6 +341,7 @@ The response to a PATCH **MUST** be `200 OK`. The body **MUST** contain a repres
 
 If applying the PATCH puts the resources in an invalid state then a `409 Conflict` should be returned.  
 
+Content-Type must be set to the resource's custom media type eg. application/vnd.mendeley-draft-dataset.1+json
 
 *URI template*
 
@@ -347,12 +349,13 @@ If applying the PATCH puts the resources in an invalid state then a `409 Conflic
 
 *Example request and response*
 
+<code>
  	PATCH /datasets/drafts/{id}
-    
+ 	
 	{
      "name": "Testing One Two"
     }
-
+</code>    
 Beware of cases where `PATCH /resource1` can affect the state of `/resource2`.
 
 ####Avoiding concurrent updates
@@ -363,6 +366,24 @@ It **MAY** be a requirement and the server can send back `428 Precondition Requi
 
 This **MAY** be used for GET requests e.g don’t download data that hasn’t changed since the client last requested it
 
+
+###Remove properties of a resource
+Removes properties of a single resource using the PATCH verb and a subset (remove operation) of [JSON PATCH](https://tools.ietf.org/html/rfc6902) semantics.
+
+Content-Type must be set to application/json-patch+json
+
+*Example request and response*
+
+<code>
+ 	PATCH /datasets/drafts/{id}
+
+    [
+     { "op": "remove", "path": "/name" }
+    ]
+</code>  
+The "remove" operation removes the value at the target location.
+
+The target location MUST exist for the operation to be successful.
 
 
 ###Delete a resource 
