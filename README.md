@@ -376,7 +376,7 @@ Content-Type must be set to application/json-patch+json
      { "op": "remove", "path": "/name" }
     ]
  
-The "remove" operation removes the value at the target location.
+The "remove" operation removes (sets to null) the value at the target location.
 
 The target location MUST exist for the operation to be successful.
 
