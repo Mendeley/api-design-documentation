@@ -18,6 +18,7 @@
     * [Read a resource](#read-a-resource)
     * [Update a resource](#update-a-resource)
       * [Avoiding concurrent updates](#avoiding-concurrent-updates)
+    * [Remove properties of a resource](#remove-properties-of-a-resource)
     * [Delete a resource](#delete-a-resource)
   * [Nesting Resources](#nesting-resources)
   * [Complex Operations (Actions)](#complex-operations-actions)
@@ -323,8 +324,7 @@ The response to a GET **MUST** be `200 OK`. The body **MUST** contain a represen
 
 *Example request and response*
 
- 	GET /datasets/articles/{id}
-    
+    GET /datasets/articles/{id}    
 	{
 		"id": "53c9523b-7535-4501-9969-93706f14672a",
 		"title": "Distinct loci of lexical and semantic access deficits in aphasia: Evidence from voxel-based lesion-symptom mapping and diffusion tensor imaging",
@@ -340,19 +340,19 @@ The response to a PATCH **MUST** be `200 OK`. The body **MUST** contain a repres
 
 If applying the PATCH puts the resources in an invalid state then a `409 Conflict` should be returned.  
 
+Content-Type must be set to the resource's custom media type eg. application/vnd.mendeley-draft-dataset.1+json
 
 *URI template*
 
 <code>PATCH /{namespace}/{resource}/{resource_identifier}</code>
 
-*Example request and response*
+*Example request*
 
- 	PATCH /datasets/drafts/{id}
-    
+    PATCH /datasets/drafts/{id}
 	{
      "name": "Testing One Two"
     }
-
+  
 Beware of cases where `PATCH /resource1` can affect the state of `/resource2`.
 
 ####Avoiding concurrent updates
@@ -364,6 +364,22 @@ It **MAY** be a requirement and the server can send back `428 Precondition Requi
 This **MAY** be used for GET requests e.g don’t download data that hasn’t changed since the client last requested it
 
 
+###Remove properties of a resource
+Removes properties of a single resource using the PATCH verb and a subset (remove operation) of [JSON PATCH](https://tools.ietf.org/html/rfc6902) semantics.
+
+Content-Type must be set to application/json-patch+json
+
+*Example request*
+
+    PATCH /datasets/drafts/{id}
+    [
+     { "op": "remove", "path": "/name" }
+    ]
+ 
+The "remove" operation removes (sets to null) the value at the target location.
+
+The target location MUST exist for the operation to be successful.
+
 
 ###Delete a resource 
 Deletes a single resource using the DELETE verb. The response to a DELETE **MUST** be `204 No Content`. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. The action may be forbidden by a particular client so a HTTP status of `403 Forbidden` **MUST** be returned. 
@@ -374,7 +390,7 @@ Deletes a single resource using the DELETE verb. The response to a DELETE **MUST
 
 *Example request and response*
 
- 	DELETE /datasets/drafts/{id}
+    DELETE /datasets/drafts/{id}
     
 	204 no content
 	
