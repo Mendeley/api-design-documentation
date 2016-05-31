@@ -20,6 +20,8 @@ Borrowed items from this [API checklist](https://mathieu.fenniak.net/the-api-che
 
 [ ] Is the API stable? Have you appropiate monitoring in place? 
 
+[ ] Does the API play a key role in your overall business strategy? (e.g. more users)
+
 
 ### General
 [ ] Does it conform to the API standards document? 
@@ -36,7 +38,9 @@ Borrowed items from this [API checklist](https://mathieu.fenniak.net/the-api-che
 
 [ ] Is it internal only? If yes, then how will other internal clients find out it exists? Have you documented it somewhere else? It should be more than Swagger as this is **not** a documentation tool.   
 
-[ ] Ongoing support and maintenance budgets? Who will support 3rd party clients?
+[ ] Ongoing support and maintenance budgets? Who will support 3rd party clients? What level of staffing and engagement are you willing to fund to support the public developer community? 
+
+[ ] How will it get prioritised against the other products roadmaps? 
 
 ### Legal 
 [ ] Have you considered Terms of Service, Privacy Policy, Copyright, Data License Cookies?    
