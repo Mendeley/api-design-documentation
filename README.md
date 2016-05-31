@@ -75,28 +75,39 @@ Reworked into these six RFCs:
 ####Authentication
 coming shortly  
 
-####Versioning 
-(this needs further clarifications)
+####Versioning
 
 **Golden Rule** 
 
-		Once we've released an API, we must NOT make breaking changes to it
+    Once we've released an API, we must NOT make breaking changes to it.
 
-        (even if it's not being used, or if it's only deployed to staging, 
-        or if there's only one client, or if we marked it as beta, 
-        or if all of the clients are sitting in the same room as us, 
-        or if we're really-really-careful-yes-we- really-mean-it-this-time)
+The Golden Rule **MUST NOT** be broken apart from in *exceptional* circumstances, such as for legal reasons.
 
+The versioning stategy has changed, existing endpoints using the 'legacy' versioning will continue to be supported until deprecated.
 
-*Content Negotiation* 
+#####New Versioning Strategy
+
+All new endpoints **MUST** have a version number in their URL directly beneath the resource name.
+
+    e.g. /documents/v1/<id>
+
+Endpoints that include a version within the URL **MUST NOT** include a version within the media type.
+
+    application/vnd.mendeley-<RESOURCE_TYPE>+json
+    e.g. application/vnd.mendeley-document+json
+    
+Clients **MUST** send a non-null and non-wildcard Accept header for endpoints that produce content. Clients **MUST** also send a non-null Content-Type header for endpoints that consume content.
+
+####Legacy Versioning Strategy
 
 Use HTTP's content negotiation mechanism for versioning. Custom media types are used in the API to let the consumers choose the format of the data they wish to receive. This is done by adding the `Accept` header when you make a request. Media types are specific to resources, allowing them to change independently.  
 
-	application/vnd.mendeley-<RESOURCE_TYPE>.<VERSION>+json
-	
-	e.g. application/vnd.mendeley-document.1+json.  The "1" here is the version number of the representation.
-	
-	
+    /<RESOURCE_TYPE>s/<id>
+    application/vnd.mendeley-<RESOURCE_TYPE>.<VERSION>+json
+    
+    e.g. /documents/<id>
+    application/vnd.mendeley-document.1+json.  The "1" here is the version number of the representation.
+
 Both client and servers are responsible for negotiation to be successful. 
 
 **Client Responsibilities** 	
@@ -104,21 +115,42 @@ Both client and servers are responsible for negotiation to be successful.
 * Clients **MUST** send an appropriate resource Media type in the header 
 		* e.g. Accept: application/vnd.mendeley-document.1+json
 
-
-**Server Responsibilities**   	
+**Server Responsibilities**
 
 * Servers **MUST** respond with a Content-Type header 
-		* e.g. Content-Type: application/vnd.mendeley-document.1+json 	
-	
+		* e.g. Content-Type: application/vnd.mendeley-document.1+json
 
-####Dates
+Endpoints that include a version within the media type **MUST NOT** include a version within the URL.
+
+###Release Lifecycle
+
+All endpoints **MUST** follow the Release Lifecycle, each phase of the lifecycle has a set of rules associated with it.
+
+####Alpha
+During this phase of development endpoints may change without giving notice to internal/external clients. Properties can be added and removed, media types modified and the entire endpoint renamed or removed. 
+
+####Beta
+When an endpoint is promoted to the Beta phase clients using the endpoint **MUST** be notified of breaking changes and reasonable notice given to allow development teams to respond to the proposed changes; non-breaking changes can be made at any time without notice.
+
+####Release
+Breaking changes **MUST NOT** be made to Released endpoints; non-breaking changes can be made at any time without notice.
+If breaking changes are required (for example, to remove an unused property) then a new version of the endpoint must be developed.
+
+####Deprecated
+
+When a new version of an endpoint is promoted to the Released stage the previous version will be moved to the Deprecated stage. Client teams using the endpoint **MUST** be informed immediately and the deprecation date **MUST** give reasonable time for migration to new endpoints. Client teams still using the endpoint **SHOULD** be reminded of the retirement before the deprecation date.
+
+####Retired
+
+Retired endpoints, those with a deprecation date in the past, will not be available - the client **MUST** receive either a 410 or 404 status code if the endpoint is requested after this time.
+
+###Dates
 
 ISO 8601 format **MUST** be used for all dates and times e.g. 2015-02-18T04:57:56Z
 
 **!** Unfortunately, some standard HTTP headers use their own format, defined in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt): Thu, 01 May 2014 10:07:28 GMT
 
 Server-generated dates **MUST** be used everywhere as the server is the only reliable clock.
-
 
 ### Collection Resources
 
