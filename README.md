@@ -33,7 +33,7 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 Keywords have been adopted from [RFC conventions](https://tools.ietf.org/html/rfc2119) to signify requirements. 
 
-##Acknowledgments
+## Acknowledgments
 Current Maintainer is <joyce.stack@mendeley.com>
 
 Original documented drafted and attributed to Matt Thomson in 2014. 
@@ -72,10 +72,10 @@ Reworked into these six RFCs:
 
 ### Applies to all resources
 
-####Authentication
+#### Authentication
 coming shortly  
 
-####Versioning
+#### Versioning
 
 **Golden Rule** 
 
@@ -85,7 +85,7 @@ The Golden Rule **MUST NOT** be broken apart from in *exceptional* circumstances
 
 The versioning stategy has changed, existing endpoints using the 'legacy' versioning will continue to be supported until deprecated.
 
-#####New Versioning Strategy
+##### New Versioning Strategy
 
 All new endpoints **MUST** have a version number in their URL directly beneath the resource name.
 
@@ -98,7 +98,7 @@ Endpoints that include a version within the URL **MUST NOT** include a version w
     
 Clients **MUST** send a non-null and non-wildcard Accept header for endpoints that produce content. Clients **MUST** also send a non-null Content-Type header for endpoints that consume content.
 
-####Legacy Versioning Strategy
+#### Legacy Versioning Strategy
 
 Use HTTP's content negotiation mechanism for versioning. Custom media types are used in the API to let the consumers choose the format of the data they wish to receive. This is done by adding the `Accept` header when you make a request. Media types are specific to resources, allowing them to change independently.  
 
@@ -122,29 +122,29 @@ Both client and servers are responsible for negotiation to be successful.
 
 Endpoints that include a version within the media type **MUST NOT** include a version within the URL.
 
-###Release Lifecycle
+### Release Lifecycle
 
 All endpoints **MUST** follow the Release Lifecycle, each phase of the lifecycle has a set of rules associated with it.
 
-####Alpha
+#### Alpha
 During this phase of development endpoints may change without giving notice to internal/external clients. Properties can be added and removed, media types modified and the entire endpoint renamed or removed. 
 
-####Beta
+#### Beta
 When an endpoint is promoted to the Beta phase clients using the endpoint **MUST** be notified of breaking changes and reasonable notice given to allow development teams to respond to the proposed changes; non-breaking changes can be made at any time without notice.
 
-####Release
+#### Release
 Breaking changes **MUST NOT** be made to Released endpoints; non-breaking changes can be made at any time without notice.
 If breaking changes are required (for example, to remove an unused property) then a new version of the endpoint must be developed.
 
-####Deprecated
+#### Deprecated
 
 When a new version of an endpoint is promoted to the Released stage the previous version will be moved to the Deprecated stage. Client teams using the endpoint **MUST** be informed immediately and the deprecation date **MUST** give reasonable time for migration to new endpoints. Client teams still using the endpoint **SHOULD** be reminded of the retirement before the deprecation date.
 
-####Retired
+#### Retired
 
 Retired endpoints, those with a deprecation date in the past, will not be available - the client **MUST** receive either a 410 or 404 status code if the endpoint is requested after this time.
 
-###Dates
+### Dates
 
 ISO 8601 format **MUST** be used for all dates and times e.g. 2015-02-18T04:57:56Z
 
@@ -202,7 +202,7 @@ What could it be used for in a RESTful API? | Fetching a representation of the r
 
              
              
-#####Filtering 
+##### Filtering 
 
 All resources **SHOULD** provide a filtering mechanism where it is expected to return a large collections. 
 
@@ -210,7 +210,7 @@ Query parameters **MUST** be used to filter on resources.
 
 	* e.g. /dogs?type=poodle  
 
-#####Filtering large collections
+##### Filtering large collections
 Some collections are too large to return in one response e.g. catalog, institutions or location information. 
 
 In such cases the default **SHOULD** default to returning a limited number of results or enforcing a CAP. What is the 'default' is specific to the resource in question e.g. most popular locations/institutions.
@@ -218,7 +218,7 @@ In such cases the default **SHOULD** default to returning a limited number of re
 Mandatory query parameters **MAY** also be used. 
               
              
-#####Pagination 
+##### Pagination 
 
 Large collection resources **MUST** have an upper bound on the number of items in the response. It is not desirable for either our servers or our clients for us to dump all the data in one go. 
 
@@ -235,10 +235,10 @@ If a client requires a mechanism to iterate over a collection of resources then 
 
 <code>limit</code> **MUST** be used to indicate the upper bounded value. 
 
-#####Time selection queries
+##### Time selection queries
 modified_since or deleted_since or {property_name}_since **SHOULD** be provided if time selection is needed. 
             
-#####Bulk requests
+##### Bulk requests
 Developers **SHOULD NOT** write bulk APIs. 
 
 e.g. <code>GET /dogs/id1,id2,id3,</code>         
@@ -254,7 +254,7 @@ e.g. <code>GET /dogs/id1,id2,id3,</code>
 
 ------
              
-###Create resource    
+### Create resource    
 Creates a new resource using the POST verb. The response to a POST **MUST** be `201 Created`, with a `Location header` containing the URL where the resource can be found. The body **MUST** contain a representation of the resources (including any server-generated fields). 
 
 *URI template*
@@ -294,7 +294,7 @@ GET response will usually have more fields, but that’s OK. There are some some
 -   extra metadata (e.g. the document that the file is attached to) goes in the headers as it’s the only place left
 
           
-#####Preventing duplicate creation of resources
+##### Preventing duplicate creation of resources
 
 Clients **MAY** using the [*post once exactly*](https://tools.ietf.org/html/draft-nottingham-http-poe-00) pattern to avoid duplicates being created. 
 
@@ -318,7 +318,7 @@ Second Attempt works errors:
 This is just a draft and has not been updated in 10+ years but is a suggested pattern.        
          
          
-#####Linking/Unlinking resources together 
+##### Linking/Unlinking resources together 
 You **MAY** use LINK and UNLINK hypermedia links to indicate when one resource is linked/unlinked to another. 
   
 *Example request*   
@@ -342,7 +342,7 @@ You **MAY** use the UNLINK method to unlink one resource from another.
              
 Specified by [*this internet draft*](http://tools.ietf.org/html/draft-snell-link-method), but at the time of writing is not an approved RFC.              
              
-###Read a resource       
+### Read a resource       
 Reads a single resource using the GET verb from a collection of resources. 
 
 GET calls can be called multiple times without any side effects i.e. idempotent.
@@ -365,7 +365,7 @@ The response to a GET **MUST** be `200 OK`. The body **MUST** contain a represen
 	}
 
 
-###Update a resource 
+### Update a resource 
 Updates a single resource using the PATCH verb. Applies a partial update.  
 
 The response to a PATCH **MUST** be `200 OK`. The body **MUST** contain a representation of the resources including any updated server-generated fields. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. If the patch is invalid then a `422 Unprocessable Entity` should be returned. 
@@ -387,7 +387,7 @@ Content-Type must be set to the resource's custom media type eg. application/vnd
   
 Beware of cases where `PATCH /resource1` can affect the state of `/resource2`.
 
-####Avoiding concurrent updates
+#### Avoiding concurrent updates
 Clients **MAY** use a precondition check of `If-Unmodified-Since` header on update requests. If specified, the resource in question will not be updated if there have been any other changes since the timestamp provided. Should be specified in [RFC 2822](http://www.rfc-base.org/txt/rfc-2822.txt) format e.g. Thu, 01 May 2014 10:07:28 GMT
 
 
@@ -396,7 +396,7 @@ It **MAY** be a requirement and the server can send back `428 Precondition Requi
 This **MAY** be used for GET requests e.g don’t download data that hasn’t changed since the client last requested it
 
 
-###Remove properties of a resource
+### Remove properties of a resource
 Removes properties of a single resource using the PATCH verb and a subset (remove operation) of [JSON PATCH](https://tools.ietf.org/html/rfc6902) semantics.
 
 Content-Type must be set to application/json-patch+json
@@ -413,7 +413,7 @@ The "remove" operation removes (sets to null) the value at the target location.
 The target location MUST exist for the operation to be successful.
 
 
-###Delete a resource 
+### Delete a resource 
 Deletes a single resource using the DELETE verb. The response to a DELETE **MUST** be `204 No Content`. In the event the resource is not located then the HTTP status returned **MUST** be `404 Not Found`. The action may be forbidden by a particular client so a HTTP status of `403 Forbidden` **MUST** be returned. 
 
 *URI template*
@@ -427,7 +427,7 @@ Deletes a single resource using the DELETE verb. The response to a DELETE **MUST
 	204 no content
 	
 	
-##Nesting Resources
+## Nesting Resources
 Sometimes it maybe necessary to nest resources because a sub resource can't exist without a parent resource. Developers are encouraged to think about if resources need to be nested and if they could be identified by a single ID. 
 
 URLS **MUST** not exceed two levels of nesting. 
@@ -455,7 +455,7 @@ Overhead on server developers who have to validate multiple IDs.
   	
 In this example we have no context what the IDs are identifying.  	
   	
-##Complex Operations (Actions)
+## Complex Operations (Actions)
 Some actions don’t naturally map to a HTTP verb. Verbs such as 'activate', 'cancel', 'validate', 'accept', 'reset', 'verify', and 'deny' are examples. These are usually a procedural concept. 
 
 
@@ -486,7 +486,7 @@ Developers are encouraged to consider resource design alternatives over using th
   	}
   	
   	
-###The 'import' action
+### The 'import' action
 Before considering making an `action` of an import action then consider: 
 
 	* What resource are you importing? 
